@@ -49,6 +49,8 @@ public:
     int n_collisions;
 
     //! Group of the species numbers that are associated for Collisions.
+    //> species_group1 (2,3) may include more than one species only for coulomb collision and DSMC,
+    //> species_group1 (2,3) only include one species for other collision.
     std::vector<unsigned int> species_group1, species_group2, species_group3;
 
     //! True if collisions inside a group of species, False if collisions between different groups of species

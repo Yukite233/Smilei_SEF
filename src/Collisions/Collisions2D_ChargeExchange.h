@@ -1,5 +1,5 @@
 /*
-Collisions2D2D_ChargeExchange class
+Collisions2D_ChargeExchange class
 */
 
 #ifndef COLLISIONS2D_CHARGEEXCHANGE_H

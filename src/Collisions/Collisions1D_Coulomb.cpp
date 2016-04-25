@@ -1,4 +1,4 @@
-#include "Collisions_Coulomb.h"
+#include "Collisions1D_Coulomb.h"
 #include "SmileiMPI.h"
 #include "Field2D.h"
 #include "H5.h"
@@ -14,7 +14,7 @@ using namespace std;
 
 
 // Constructor
-Collisions_Coulomb::Collisions_Coulomb(PicParams& param, vector<Species*>& vecSpecies, SmileiMPI* smpi,
+Collisions1D_Coulomb::Collisions1D_Coulomb(PicParams& param, vector<Species*>& vecSpecies, SmileiMPI* smpi,
                        unsigned int n_collisions,
                        vector<unsigned int> species_group1,
                        vector<unsigned int> species_group2,
@@ -44,7 +44,7 @@ Collisions_Coulomb::Collisions_Coulomb(PicParams& param, vector<Species*>& vecSp
     if( debug_every>0 ) {
         ostringstream mystream;
         mystream.str("");
-        mystream << "Collisions" << n_collisions << ".h5";
+        mystream << "Collisions1D" << n_collisions << ".h5";
         // Create the HDF5 file
         hid_t pid = H5Pcreate(H5P_FILE_ACCESS);
         H5Pset_fapl_mpio(pid, MPI_COMM_WORLD, MPI_INFO_NULL);
@@ -75,21 +75,21 @@ Collisions_Coulomb::Collisions_Coulomb(PicParams& param, vector<Species*>& vecSp
 
 }
 
-Collisions_Coulomb::~Collisions_Coulomb()
+Collisions1D_Coulomb::~Collisions1D_Coulomb()
 {
     if (fileId != 0) H5Fclose(fileId);
 }
 
 
 // Declare other static variables here
-bool               Collisions::debye_length_required;
-vector<double>     Collisions::debye_length_squared;
+bool               Collisions1D::debye_length_required;
+vector<double>     Collisions1D::debye_length_squared;
 
 
 
 // Calculates the debye length squared in each cluster
 // The formula for the inverse debye length squared is sumOverSpecies(density*charge^2/temperature)
-void Collisions_Coulomb::calculate_debye_length(PicParams& params, vector<Species*>& vecSpecies)
+void Collisions1D_Coulomb::calculate_debye_length(PicParams& params, vector<Species*>& vecSpecies)
 {
 
     // get info on particle binning
@@ -163,8 +163,8 @@ void Collisions_Coulomb::calculate_debye_length(PicParams& params, vector<Specie
 }
 
 
-// Calculates the collisions for a given Collisions object
-void Collisions_Coulomb::collide(PicParams& params, vector<Species*>& vecSpecies, int itime)
+// Calculates the collisions for a given Collisions1D object
+void Collisions1D_Coulomb::collide(PicParams& params, vector<Species*>& vecSpecies, int itime)
 {
 
     unsigned int nbins = vecSpecies[0]->bmin.size(); // number of bins
@@ -484,7 +484,7 @@ void Collisions_Coulomb::collide(PicParams& params, vector<Species*>& vecSpecies
 // It involves the "s" parameter (~ collision frequency * deflection expectation)
 //   and a random number "U".
 // Technique slightly modified in http://dx.doi.org/10.1063/1.4742167
-inline double Collisions_Coulomb::cos_chi(double s)
+inline double Collisions1D_Coulomb::cos_chi(double s)
 {
 
     double A, invA;

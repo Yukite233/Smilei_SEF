@@ -1,5 +1,5 @@
 /*
-Collisions class
+Collisions1D class
 */
 
 #ifndef COLLISIONS1D_H

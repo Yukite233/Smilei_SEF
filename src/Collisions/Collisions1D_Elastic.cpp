@@ -1,4 +1,4 @@
-#include "Collisions_Ionization.h"
+#include "Collisions1D_Ionization.h"
 #include "SmileiMPI.h"
 #include "Field2D.h"
 #include "H5.h"
@@ -14,7 +14,7 @@ using namespace std;
 
 
 // Constructor
-Collisions_Ionization::Collisions_Ionization(PicParams& param, vector<Species*>& vecSpecies, SmileiMPI* smpi,
+Collisions1D_Ionization::Collisions1D_Ionization(PicParams& param, vector<Species*>& vecSpecies, SmileiMPI* smpi,
                        unsigned int n_collisions,
                        vector<unsigned int> species_group1,
                        vector<unsigned int> species_group2,
@@ -45,14 +45,14 @@ Collisions_Ionization::Collisions_Ionization(PicParams& param, vector<Species*>&
 
 }
 
-Collisions_Ionization::~Collisions_Ionization()
+Collisions1D_Ionization::~Collisions1D_Ionization()
 {
     if (fileId != 0) H5Fclose(fileId);
 }
 
 
-// Calculates the collisions for a given Collisions object
-void Collisions_Ionization::collide(PicParams& params, vector<Species*>& vecSpecies, int itime)
+// Calculates the collisions for a given Collisions1D object
+void Collisions1D_Ionization::collide(PicParams& params, vector<Species*>& vecSpecies, int itime)
 {
 
     unsigned int nbins = vecSpecies[0]->bmin.size(); // number of bins
@@ -199,7 +199,7 @@ void cross_section(double ke)
 // It involves the "s" parameter (~ collision frequency * deflection expectation)
 //   and a random number "U".
 // Technique slightly modified in http://dx.doi.org/10.1063/1.4742167
-inline double Collisions_Ionization::cos_chi(double s)
+inline double Collisions1D_Ionization::cos_chi(double s)
 {
 
     double A, invA;
