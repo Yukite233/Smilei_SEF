@@ -14,15 +14,8 @@ using namespace std;
 
 
 // Constructor
-PSI2D_Sputtering::PSI2D_Sputtering(PicParams& param, vector<Species*>& vecSpecies, SmileiMPI* smpi,
-                       unsigned int n_PSI,
-                       vector<unsigned int> species1)
+PSI2D_Sputtering::PSI2D_Sputtering()
 {
-
-    n_PSI    		= (n_PSI    );
-    species1  		= (species1  );
-    start           = (0         );
-
 
 
 

@@ -1,4 +1,4 @@
-#include "Collisions2D_Ionization.h"
+#include "Collisions2D_ChargeExchange.h"
 #include "SmileiMPI.h"
 #include "Field2D.h"
 #include "H5.h"
@@ -14,7 +14,7 @@ using namespace std;
 
 
 // Constructor
-Collisions2D_Ionization::Collisions2D_Ionization(PicParams& param, vector<Species*>& vecSpecies, SmileiMPI* smpi,
+Collisions2D_ChargeExchange::Collisions2D_ChargeExchange(PicParams& param, vector<Species*>& vecSpecies, SmileiMPI* smpi,
                        unsigned int n_collisions,
                        vector<unsigned int> species_group1,
                        vector<unsigned int> species_group2,
@@ -39,20 +39,19 @@ Collisions2D_Ionization::Collisions2D_Ionization(PicParams& param, vector<Specie
     //MPI_Allreduce( smpi->isMaster()?MPI_IN_PLACE:&totbins, &totbins, 1, MPI_INTEGER, MPI_SUM, MPI_COMM_WORLD);
     MPI_Reduce( smpi->isMaster()?MPI_IN_PLACE:&totbins, &totbins, 1, MPI_INTEGER, MPI_SUM, 0, MPI_COMM_WORLD);
 
-    // if debug requested, prepare hdf5 file
-    fileId = 0;
+
 
 
 }
 
-Collisions2D_Ionization::~Collisions2D_Ionization()
+Collisions2D_ChargeExchange::~Collisions2D_ChargeExchange()
 {
-    if (fileId != 0) H5Fclose(fileId);
+
 }
 
 
 // Calculates the collisions for a given Collisions2D object
-void Collisions2D_Ionization::collide(PicParams& params, vector<Species*>& vecSpecies, int itime)
+void Collisions2D_ChargeExchange::collide(PicParams& params, vector<Species*>& vecSpecies, int itime)
 {
 
     unsigned int nbins = vecSpecies[0]->bmin.size(); // number of bins
@@ -80,6 +79,10 @@ void Collisions2D_Ionization::collide(PicParams& params, vector<Species*>& vecSp
            logL, bmin, s, vrel, smax,
            cosX, sinX, phi, sinXcosPhi, sinXsinPhi, p_perp, inv_p_perp,
            newpx_COM, newpy_COM, newpz_COM, U, vcp;
+
+   double  sigma_cr, sigma_cr_max, v_square, v_magnitude, ke1, ke_primary, ke_secondary,
+           ran, P_collision, ran_P, Pi;
+
     Field2D *smean, *logLmean, *ncol;//, *temperature
     ostringstream name;
     hid_t did;
@@ -87,12 +90,12 @@ void Collisions2D_Ionization::collide(PicParams& params, vector<Species*>& vecSp
     sg1 = &species_group1;
     sg2 = &species_group2;
 
-    s1 = vecSpecies[(*sg1)[0]];      s2 = vecSpecies[(*sg2)[0]];        s3 = vecSpecies[(*sg3)[0]];
-    p1 = &(s1->particles);           p2 = &(s2->particles);             p3 = &(s3->particles);
-    m1 = s1->species_param.mass;     m2 = s2->species_param.mass;       m3 = s3->species_param.mass;
-    W1 = p1->weight(i1);             W2 = p2->weight(i2);               W3 = p3->weight(i3);
-    bmin1 = s1->bmin;                bmin2 = s2->bmin;                  bmin3 = s3->bmin;
-    bmax1 = s1->bmax;                bmax2 = s2->bmax;                  bmax3 = s3->bmax;
+    s1 = vecSpecies[(*sg1)[0]];      s2 = vecSpecies[(*sg2)[0]];
+    p1 = &(s1->particles);           p2 = &(s2->particles);
+    m1 = s1->species_param.mass;     m2 = s2->species_param.mass;
+    W1 = p1->weight(i1);             W2 = p2->weight(i2);
+    bmin1 = s1->bmin;                bmin2 = s2->bmin;
+    bmax1 = s1->bmax;                bmax2 = s2->bmax;
     // Loop on bins
     for (unsigned int ibin=0 ; ibin<nbins ; ibin++) {
 
@@ -108,8 +111,8 @@ void Collisions2D_Ionization::collide(PicParams& params, vector<Species*>& vecSp
 
         for(int iPart = bmin1[ibin]; iPart < bmax1[ibin]; iPart++)
         {
-            double ypn = particles.position(1, ipart)*dy_inv_;
-            jp_ = floor(ypn);
+            double ypn = p1->position(1, iPart)*dy_inv_;
+            int jp_ = floor(ypn);
             jp_ = jp_ - j_domain_begin;
             index1[jp_].push_back(iPart);
         }
@@ -130,8 +133,8 @@ void Collisions2D_Ionization::collide(PicParams& params, vector<Species*>& vecSp
 
         for(int iPart = bmin2[ibin]; iPart < bmax2[ibin]; iPart++)
         {
-            double ypn = particles.position(1, ipart)*dy_inv_;
-            jp_ = floor(ypn);
+            double ypn = p2->position(1, iPart)*dy_inv_;
+            int jp_ = floor(ypn);
             jp_ = jp_ - j_domain_begin;
             index2[jp_].push_back(iPart);
         }
@@ -157,7 +160,7 @@ void Collisions2D_Ionization::collide(PicParams& params, vector<Species*>& vecSp
                 v_magnitude = sqrt(v_square);
                 //>kinetic energy of species1 (electrons)
                 ke1 = 0.5 * m1 * v_square;
-                //>energy_ion  is the ionization threshold energy
+                //>energy_ion  is the ChargeExchange threshold energy
                 ke_primary = ke1 - energy_ion;
 
                 //> the energy of the secondary electron
@@ -173,7 +176,7 @@ void Collisions2D_Ionization::collide(PicParams& params, vector<Species*>& vecSp
                 if(ran_P < Pi){
                     W1              = p1->weight(i1);
                     p1->weight(i1)  = p2->weight(i2);
-                    p2->weight(i2)  = W1
+                    p2->weight(i2)  = W1;
                     totNCollision++;
                 }
             }
@@ -186,40 +189,7 @@ void Collisions2D_Ionization::collide(PicParams& params, vector<Species*>& vecSp
 
 
 
-void cross_section(double ke)
+double cross_section(double ke)
 {
-
-}
-
-
-
-
-// Technique given by Nanbu in http://dx.doi.org/10.1103/PhysRevE.55.4642
-//   to pick randomly the deflection angle cosine, in the center-of-mass frame.
-// It involves the "s" parameter (~ collision frequency * deflection expectation)
-//   and a random number "U".
-// Technique slightly modified in http://dx.doi.org/10.1063/1.4742167
-inline double Collisions2D_Ionization::cos_chi(double s)
-{
-
-    double A, invA;
-    //!\todo make a faster rand by preallocating ??
-    double U = (double)rand() / RAND_MAX;
-
-    if( s < 0.1 ) {
-        if ( U<0.0001 ) U=0.0001; // ensures cos_chi > 0
-        return 1. + s*log(U);
-    }
-    if( s < 3.  ) {
-        // the polynomial has been modified from the article in order to have a better form
-        invA = 0.00569578 +(0.95602 + (-0.508139 + (0.479139 + ( -0.12789 + 0.0238957*s )*s )*s )*s )*s;
-        A = 1./invA;
-        return  invA  * log( exp(-A) + 2.*U*sinh(A) );
-    }
-    if( s < 6.  ) {
-        A = 3.*exp(-s);
-        return (1./A) * log( exp(-A) + 2.*U*sinh(A) );
-    }
-    return 2.*U - 1.;
 
 }

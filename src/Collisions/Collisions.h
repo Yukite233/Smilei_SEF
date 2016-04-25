@@ -59,20 +59,10 @@ public:
     //! Number of timesteps between each dump of collisions debugging
     int debug_every;
 
-    //! Method to calculate the Debye length in each cluster
-    virtual void calculate_debye_length(PicParams&,std::vector<Species*>&){};
-
-    //! is true if any of the collisions objects need automatically-computed coulomb log
-    static bool debye_length_required;
-    virtual double cos_chi(double){};
+    virtual double cross_section(double ke){};
 
     //! Method called in the main smilei loop to apply collisions at each timestep
     virtual void collide(PicParams&,std::vector<Species*>&,int){};
-
-    //! Contains the debye length in each cluster, computed each timestep
-    static std::vector<double> debye_length_squared;
-    //! Hdf5 file id
-    hid_t fileId;
 
     int totbins;
     int start;
@@ -80,7 +70,10 @@ public:
 
 
 
+
+
 private:
+
 
 
 

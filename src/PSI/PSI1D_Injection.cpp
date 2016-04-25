@@ -1,4 +1,4 @@
-#include "PSI_Injection.h"
+#include "PSI1D_Injection.h"
 #include "SmileiMPI.h"
 #include "Field2D.h"
 #include "H5.h"
@@ -14,21 +14,17 @@ using namespace std;
 
 
 // Constructor
-PSI_Injection::PSI_Injection(PicParams& param, vector<Species*>& vecSpecies, SmileiMPI* smpi,
-                       unsigned int n_PSI,
-                       vector<unsigned int> species1,)
+PSI1D_Injection::PSI1D_Injection()
 {
 
-    n_PSI    		= (n_PSI    );
-    species_group1  = (species_group1  );
-    start           = (0               );
+
 
 
 
 
 }
 
-PSI_Injection::~PSI_Injection()
+PSI1D_Injection::~PSI1D_Injection()
 {
 
 }
@@ -36,7 +32,7 @@ PSI_Injection::~PSI_Injection()
 
 
 // Calculates the PSI for a given Collisions object
-void PSI_Injection::performPSI(PicParams& params, vector<Species*>& vecSpecies, int itime)
+void PSI1D_Injection::performPSI(PicParams& params, vector<Species*>& vecSpecies, int itime)
 {
 
     unsigned int nbins = vecSpecies[0]->bmin.size(); // number of bins

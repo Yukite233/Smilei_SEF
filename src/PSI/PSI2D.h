@@ -12,6 +12,7 @@ PSI2D class
 #include "InputData.h"
 #include "Species.h"
 #include "H5.h"
+#include "PSI.h"
 
 class PSI2D : public PSI
 {

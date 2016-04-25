@@ -12,6 +12,8 @@ Collisions2D class
 #include "InputData.h"
 #include "Species.h"
 #include "H5.h"
+#include "Collisions.h"
+
 
 class Collisions2D : public Collisions
 {
@@ -21,10 +23,14 @@ public:
     Collisions2D(){};
     ~Collisions2D(){};
 
+protected:
+    //! Inverse of the spatial-step
+    double dx_inv_;
+    double dy_inv_;
+    int i_domain_begin;
+    int j_domain_begin;
 
 private:
-
-
 };
 
 

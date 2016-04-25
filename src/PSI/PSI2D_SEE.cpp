@@ -14,16 +14,8 @@ using namespace std;
 
 
 // Constructor
-PSI2D_SEE::PSI2D_SEE(PicParams& param, vector<Species*>& vecSpecies, SmileiMPI* smpi,
-                       unsigned int n_PSI,
-                       vector<unsigned int> species1)
+PSI2D_SEE::PSI2D_SEE()
 {
-
-    n_PSI    = (n_PSI    );
-    species1  = (species1  );
-    start           = (0               );
-
-
 
 
 }

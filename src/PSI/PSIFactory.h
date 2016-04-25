@@ -96,7 +96,7 @@ public:
 		        MESSAGE(1,"Debug                   : " << (debug_every<=0?"No debug":mystream.str()));
 
 		        // Add new PSI objects to vector
-		        vecPSI.push_back( new PSI_Injection(params,vecSpecies,smpi,n_PSI,sgroup1,sgroup2,clog,intra,debug_every) );
+		        vecPSI.push_back( new PSI1D_Injection() );
 
 
 			}
@@ -105,14 +105,14 @@ public:
 
 				// Add new PSI objects to vector
 				//> Three species participate in the ionization collision
-		        vecPSI.push_back( new PSI_Sputtering(params,vecSpecies,smpi,n_PSI,sgroup1,sgroup2,clog,intra,debug_every) );
+		        vecPSI.push_back( new PSI1D_Sputtering() );
 
 			}
 			else if(PSI_type == "SEE"){
 				// Add new PSI objects to vector
 				//> Only one species group participate in the ionization collision, all the particles from
 				//> different species are the same
-		        vecPSI.push_back( new PSI_SEE(params,vecSpecies,smpi,n_PSI,sgroup1,sgroup2,clog,intra,debug_every) );
+		        vecPSI.push_back( new PSI1D_SEE() );
 
 			}
 
@@ -126,8 +126,6 @@ public:
 	        if (params.wavelength_SI <= 0.)
 	            ERROR("The parameter `wavelength_SI` needs to be defined and positive in order to compute PSI");
 
-	    // pass the variable "debye_length_required" into the Collision class
-	    PSI::debye_length_required = debye_length_required;
 
 	    return vecPSI;
 	};

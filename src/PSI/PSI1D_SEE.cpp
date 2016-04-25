@@ -14,29 +14,21 @@ using namespace std;
 
 
 // Constructor
-PSI1D_SEE::PSI1D_SEE(PicParams& param, vector<Species*>& vecSpecies, SmileiMPI* smpi,
-                       unsigned int n_PSI,
-                       vector<unsigned int> species1)
+PSI1D_SEE::PSI1D_SEE()
 {
-
-    n_PSI    = (n_PSI    );
-    species1  = (species1  );
-    start           = (0               );
-
-
 
 
 }
 
-PSI_SEE::~PSI_SEE()
+PSI1D_SEE::~PSI1D_SEE()
 {
 
 }
 
 
 
-// Calculates the PSI
-void PSI_SEE::performPSI(PicParams& params, vector<Species*>& vecSpecies, int itime)
+// Calculates the PSI1D
+void PSI1D_SEE::performPSI(PicParams& params, vector<Species*>& vecSpecies, int itime)
 {
 
     unsigned int nbins = vecSpecies[0]->bmin.size(); // number of bins

@@ -14,16 +14,8 @@ using namespace std;
 
 
 // Constructor
-PSI1D_Sputtering::PSI1D_Sputtering(PicParams& param, vector<Species*>& vecSpecies, SmileiMPI* smpi,
-                       unsigned int n_PSI1D,
-                       vector<unsigned int> species1)
+PSI1D_Sputtering::PSI1D_Sputtering()
 {
-
-    n_PSI1D    		= (n_PSI1D    );
-    species1  		= (species1  );
-    start           = (0         );
-
-
 
 
 }

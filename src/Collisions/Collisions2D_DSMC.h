@@ -22,17 +22,22 @@ public:
     Collisions2D_DSMC(PicParams&,std::vector<Species*>&,SmileiMPI*,unsigned int,std::vector<unsigned int>,std::vector<unsigned int>,double,bool,int);
     ~Collisions2D_DSMC();
 
+    void scatter_particles(Particles* particle1, int iPart1, Particles* particle2, int iPart2);
+    double evalSigma(double cr);
+    inline double relative_velocity(Particles* particle1, int iPart1, Particles* particle2, int iPart2)
+    {
+        double rv;
+        rv = sqrt( pow((particle1->momentum(0, iPart1) - particle2->momentum(0, iPart2)), 2)
+                +  pow((particle1->momentum(1, iPart1) - particle2->momentum(1, iPart2)), 2)
+                +  pow((particle1->momentum(2, iPart1) - particle2->momentum(2, iPart2)), 2)
+                );
+        return rv;
+    };
 
-    //! DSMC logarithm (zero or negative means automatic)
-    double coulomb_log;
-
-    //! Method to calculate the Debye length in each cluster
-    void calculate_debye_length(PicParams&,std::vector<Species*>&);
 
     //! Method called in the main smilei loop to apply collisions at each timestep
     void collide(PicParams&,std::vector<Species*>&,int);
 
-    virtual double cos_chi(double);
 private:
 
 

@@ -12,6 +12,8 @@ Collisions1D class
 #include "InputData.h"
 #include "Species.h"
 #include "H5.h"
+#include "Collisions.h"
+
 
 class Collisions1D : public Collisions
 {
@@ -20,10 +22,9 @@ public:
     //! Constructor for Collisions between two species
     Collisions1D(){};
     ~Collisions1D(){};
-
-
 private:
-
+    double dx_inv_;
+    unsigned int index_domain_begin;
 
 };
 

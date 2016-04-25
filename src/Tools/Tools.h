@@ -1,22 +1,22 @@
 /*!
  \page macros Code macros
- 
+
  The c++ macros used in the code should be placed in the \ref Tools.h file.
- 
+
  \section caveats Warning, Error and Debug
  All these macros will print to the standard error a tag , the name, line of the source file that caused the call
  as well as the name of the function calling the macro. The arguments contained in the parenthesis will then be
  appended. Arguments can be chained together in c++ stream style (using <tt><<</tt> operator)
- 
+
  The macro <tt>WARNING("text")</tt> is the most basic and is itended for warnings that should always be present in the code.
- 
+
  The macro <tt>ERROR("text")</tt> is used to print an error and close the program.
- 
+
  The macro <tt>DEBUG("text")</tt> can be used in two ways: using just an argument, it will display a debug message
  (similar to <tt>WARNING("text")</tt> ) but it can be used in the form <tt>DEBUG(N,"text")</tt> in this case N is a number and
  represents the debug level starting at which the dubug must be displayed.
  The debug level can be changed int the namelist vie the key <tt>debug</tt>.
- 
+
  */
 
 #ifndef TOOLS_H
@@ -40,9 +40,9 @@
 #define MESSAGE4(...) MESSAGE3(__VA_ARGS__,MESSAGE2,MESSAGE1,)
 #define MESSAGE(...) MESSAGE4(__VA_ARGS__)(__VA_ARGS__)
 
-#define __PRINTLINE(__num) {MESSAGE(std::string(__num,'-'))} 
+#define __PRINTLINE(__num) {MESSAGE(std::string(__num,'-'))}
 
-#define TITLE(...) {MESSAGE(std::endl); MESSAGE(__VA_ARGS__); __PRINTLINE(80);} 
+#define TITLE(...) {MESSAGE(std::endl); MESSAGE(__VA_ARGS__); __PRINTLINE(80);}
 
 // ATTENTION: this costs a lot! use with care!
 #define MESSAGEALL1(__txt)  {int __rk; MPI_Comm_rank( MPI_COMM_WORLD, &__rk ); \

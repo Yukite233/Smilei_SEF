@@ -11,7 +11,6 @@
 #include "PicParams.h"
 #include "SmileiMPI.h"
 #include "Pusher.h"
-#include "Ionization.h"
 #include "ElectroMagn.h"
 #include "Profile.h"
 
@@ -86,8 +85,6 @@ public:
     Particles particles;
     //std::vector<int> index_of_particles_to_exchange;
 
-    //! Ionization method
-    Ionization* Ionize;
 
     //! to keep rack of ionized electrons
     Species *electron_species;

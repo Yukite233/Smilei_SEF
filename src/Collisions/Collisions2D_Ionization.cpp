@@ -39,15 +39,14 @@ Collisions2D_Ionization::Collisions2D_Ionization(PicParams& param, vector<Specie
     //MPI_Allreduce( smpi->isMaster()?MPI_IN_PLACE:&totbins, &totbins, 1, MPI_INTEGER, MPI_SUM, MPI_COMM_WORLD);
     MPI_Reduce( smpi->isMaster()?MPI_IN_PLACE:&totbins, &totbins, 1, MPI_INTEGER, MPI_SUM, 0, MPI_COMM_WORLD);
 
-    // if debug requested, prepare hdf5 file
-    fileId = 0;
+
 
 
 }
 
 Collisions2D_Ionization::~Collisions2D_Ionization()
 {
-    if (fileId != 0) H5Fclose(fileId);
+
 }
 
 
@@ -70,16 +69,21 @@ void Collisions2D_Ionization::collide(PicParams& params, vector<Species*>& vecSp
     unsigned int npairs; // number of pairs of macro-particles
     vector<unsigned int> np1, np2; // numbers of macro-particles in each species, in each group
     double n12, n123, n223; // densities of particles
-    unsigned int i1, i2, ispec1, ispec2;
-    Species   *s1, *s2;
-    Particles *p1, *p2;
-    double m1, m2, m12, W1, W2, qqm, qqm2, gamma1, gamma2, gamma12, gamma12_inv,
+    unsigned int i1, i2, i3, ispec1, ispec2, ispec3;
+    Species   *s1, *s2, *s3;
+    Particles *p1, *p2, *p3;
+    double m1, m2, m3, m12, W1, W2, W3, qqm, qqm2, gamma1, gamma2, gamma12, gamma12_inv,
            COM_vx, COM_vy, COM_vz, COM_vsquare, COM_gamma,
            term1, term2, term3, term4, term5, term6, coeff1, coeff2, coeff3, coeff4, twoPi,
            vcv1, vcv2, px_COM, py_COM, pz_COM, p2_COM, p_COM, gamma1_COM, gamma2_COM,
            logL, bmin, s, vrel, smax,
            cosX, sinX, phi, sinXcosPhi, sinXsinPhi, p_perp, inv_p_perp,
            newpx_COM, newpy_COM, newpz_COM, U, vcp;
+
+    double  sigma_cr, sigma_cr_max, v_square, v_magnitude, ke1, ke_primary, ke_secondary,
+            ran, P_collision, ran_P;
+
+
     Field2D *smean, *logLmean, *ncol;//, *temperature
     ostringstream name;
     hid_t did;
@@ -108,8 +112,8 @@ void Collisions2D_Ionization::collide(PicParams& params, vector<Species*>& vecSp
 
         for(int iPart = bmin1[ibin]; iPart < bmax1[ibin]; iPart++)
         {
-            double ypn = p1->position(1, ipart)*dy_inv_;
-            jp_ = floor(ypn);
+            double ypn = p1->position(1, iPart)*dy_inv_;
+            int jp_ = floor(ypn);
             jp_ = jp_ - j_domain_begin;
             index1[jp_].push_back(iPart);
         }
@@ -130,8 +134,8 @@ void Collisions2D_Ionization::collide(PicParams& params, vector<Species*>& vecSp
 
         for(int iPart = bmin2[ibin]; iPart < bmax2[ibin]; iPart++)
         {
-            double ypn = p2->position(1, ipart)*dy_inv_;
-            jp_ = floor(ypn);
+            double ypn = p2->position(1, iPart)*dy_inv_;
+            double jp_ = floor(ypn);
             jp_ = jp_ - j_domain_begin;
             index2[jp_].push_back(iPart);
         }
@@ -224,44 +228,48 @@ void Collisions2D_Ionization::collide(PicParams& params, vector<Species*>& vecSp
     p2->erase_particle_trail(idNew);
     //>update the bmax, because created particles are put the end of species1 and species3
     //>then sort_part to move the particles to the bins which they belong to
-    p1->bmax.back() += totNCollision;
+    s1->bmax.back() += totNCollision;
     s1->sort_part();
-    p3->bmax.back() += totNCollision;
+    s3->bmax.back() += totNCollision;
     s3->sort_part();
 
 }
-
 
 
 //>the method is eqution (11) from the ref: a Monte Carlo collision model for the particle in cell method: applications to
 //>argon and oxygen discharges.
 //>and the code is transformed from C.F. Sang's fortran code
 void calculate_scatter_velocity(double ke, double v_magnitude, double mass1, double mass2,
-vector<int>& momentum_unit, vector<int>& momentum_temp)
+vector<double>& momentum_unit, vector<double>& momentum_temp)
 {
-    ra = (double)rand() / RAND_MAX;
-    costheta = 1.0 - 2.0 * ra;
-    sintheta = sqrt(1.0 - abs(costheta * costheta) );
+    double up1, up2, up3;
+    double r11, r12, r13, r21, r22, r23, r31, r32, r33;
+    double mag;
+
+    double ra = (double)rand() / RAND_MAX;
+    double costheta = 1.0 - 2.0 * ra;
+    double sintheta = sqrt(1.0 - abs(costheta * costheta) );
 
     ra = (double)rand() / RAND_MAX;
-    phi = 2.0 * pi * ra;
-    cosphi = cos(phi);
-    sinphi = sin(phi);
+    double pi = 3.1415926;
+    double phi = 2.0 * pi * ra;
+    double cosphi = cos(phi);
+    double sinphi = sin(phi);
 
-    ve=v_magnitude*dsqrt(1.0-2.0*mass1*(1.0-costheta)/mass2);
+    double ve=v_magnitude*sqrt(1.0-2.0*mass1*(1.0-costheta)/mass2);
 
     r13 = momentum_unit[0];
     r23 = momentum_unit[1];
     r33 = momentum_unit[2];
     if(r33 == 1.0 ){
-        up1= 0.
-        up2= 1.
-        up3= 0.
+        up1= 0.;
+        up2= 1.;
+        up3= 0.;
     }
     else{
-        up1= 0.
-        up2= 0.
-        up3= 1.
+        up1= 0.;
+        up2= 0.;
+        up3= 1.;
     }
 
     r12 = r23 * up3 - r33 * up2;
@@ -283,40 +291,7 @@ vector<int>& momentum_unit, vector<int>& momentum_temp)
 
 
 
-void cross_section(double ke)
+double cross_section(double ke)
 {
-
-}
-
-
-
-
-// Technique given by Nanbu in http://dx.doi.org/10.1103/PhysRevE.55.4642
-//   to pick randomly the deflection angle cosine, in the center-of-mass frame.
-// It involves the "s" parameter (~ collision frequency * deflection expectation)
-//   and a random number "U".
-// Technique slightly modified in http://dx.doi.org/10.1063/1.4742167
-inline double Collisions2D_Ionization::cos_chi(double s)
-{
-
-    double A, invA;
-    //!\todo make a faster rand by preallocating ??
-    double U = (double)rand() / RAND_MAX;
-
-    if( s < 0.1 ) {
-        if ( U<0.0001 ) U=0.0001; // ensures cos_chi > 0
-        return 1. + s*log(U);
-    }
-    if( s < 3.  ) {
-        // the polynomial has been modified from the article in order to have a better form
-        invA = 0.00569578 +(0.95602 + (-0.508139 + (0.479139 + ( -0.12789 + 0.0238957*s )*s )*s )*s )*s;
-        A = 1./invA;
-        return  invA  * log( exp(-A) + 2.*U*sinh(A) );
-    }
-    if( s < 6.  ) {
-        A = 3.*exp(-s);
-        return (1./A) * log( exp(-A) + 2.*U*sinh(A) );
-    }
-    return 2.*U - 1.;
 
 }

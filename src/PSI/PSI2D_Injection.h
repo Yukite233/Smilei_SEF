@@ -16,7 +16,7 @@ class PSI2D_Injection : public PSI2D
 
 public:
     //! Constructor for Collisions between two species
-    PSI2D_Injection(PicParams&,std::vector<Species*>&,SmileiMPI*,unsigned int,std::vector<unsigned int>,std::vector<unsigned int>,double,bool,int);
+    PSI2D_Injection();
     ~PSI2D_Injection();
 
 

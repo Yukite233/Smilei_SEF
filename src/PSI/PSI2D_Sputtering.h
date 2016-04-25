@@ -16,7 +16,7 @@ class PSI2D_Sputtering : public PSI2D
 
 public:
     //! Constructor
-    PSI2D_Sputtering(PicParams&,std::vector<Species*>&,SmileiMPI*,unsigned int,std::vector<unsigned int>,std::vector<unsigned int>,double,bool,int);
+    PSI2D_Sputtering();
     ~PSI2D_Sputtering();
 
 

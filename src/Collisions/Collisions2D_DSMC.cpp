@@ -39,128 +39,17 @@ Collisions2D_DSMC::Collisions2D_DSMC(PicParams& param, vector<Species*>& vecSpec
     //MPI_Allreduce( smpi->isMaster()?MPI_IN_PLACE:&totbins, &totbins, 1, MPI_INTEGER, MPI_SUM, MPI_COMM_WORLD);
     MPI_Reduce( smpi->isMaster()?MPI_IN_PLACE:&totbins, &totbins, 1, MPI_INTEGER, MPI_SUM, 0, MPI_COMM_WORLD);
 
-    // if debug requested, prepare hdf5 file
-    fileId = 0;
-    if( debug_every>0 ) {
-        ostringstream mystream;
-        mystream.str("");
-        mystream << "Collisions2D" << n_collisions << ".h5";
-        // Create the HDF5 file
-        hid_t pid = H5Pcreate(H5P_FILE_ACCESS);
-        H5Pset_fapl_mpio(pid, MPI_COMM_WORLD, MPI_INFO_NULL);
-        fileId = H5Fcreate(mystream.str().c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, pid);
-        H5Pclose(pid);
-        // write all parameters as HDF5 attributes
-        string ver(__VERSION);
-        H5::attr(fileId, "Version", ver);
-        mystream.str("");
-        mystream << species_group1[0];
-        for(unsigned int i=1; i<species_group1.size(); i++) mystream << "," << species_group1[i];
-        H5::attr(fileId, "species1" , mystream.str());
-        mystream.str("");
-        mystream << species_group2[0];
-        for(unsigned int i=1; i<species_group2.size(); i++) mystream << "," << species_group2[i];
-        H5::attr(fileId, "species2" , mystream.str());
-        H5::attr(fileId, "coulomb_log" , coulomb_log);
-        H5::attr(fileId, "debug_every"  , debug_every);
 
-        // Find out where the proc will start writing in the overall array
-        MPI_Status status;
-        // Receive the location where to start from the previous node
-        if (smpi->getRank()>0) MPI_Recv( &(start), 1, MPI_INTEGER, smpi->getRank()-1, 0, MPI_COMM_WORLD, &status );
-        // Send the location where to end to the next node
-        int end = start+nbins;
-        if (smpi->getRank()!=smpi->getSize()-1) MPI_Send( &end, 1, MPI_INTEGER, smpi->getRank()+1, 0, MPI_COMM_WORLD );
-    }
 
 }
 
 Collisions2D_DSMC::~Collisions2D_DSMC()
 {
-    if (fileId != 0) H5Fclose(fileId);
-}
-
-
-// Declare other static variables here
-bool               Collisions2D::debye_length_required;
-vector<double>     Collisions2D::debye_length_squared;
-
-
-
-// Calculates the debye length squared in each cluster
-// The formula for the inverse debye length squared is sumOverSpecies(density*charge^2/temperature)
-void Collisions2D_DSMC::calculate_debye_length(PicParams& params, vector<Species*>& vecSpecies)
-{
-
-    // get info on particle binning
-    unsigned int nbins = vecSpecies[0]->bmin.size(); // number of bins
-    unsigned int nspec = vecSpecies.size(); // number of species
-    unsigned int bmin, bmax;
-    double p2, density, density_max, charge, temperature, rmin2;
-    Species   * s;
-    Particles * p;
-    double coeff = params.wavelength_SI/(6.*M_PI*2.8179403267e-15); // normLength/(3*electronRadius) = wavelength/(6*pi*electronRadius)
-
-    debye_length_squared.resize(nbins);
-
-    // Loop on bins
-    //! \todo Make OpenMP parallelization (MF & JD)
-    for (unsigned int ibin=0 ; ibin<nbins ; ibin++) {
-
-        density_max = 0.;
-        debye_length_squared[ibin] = 0.;
-        for (unsigned int ispec=0 ; ispec<nspec ; ispec++) { // loop all species
-            // Calculation of particles density, mean charge, and temperature
-            // Density is the sum of weights
-            // Temperature basic definition is the average <v*p> divided by 3
-            //    (instead of v*p, we use p^2/gamma)
-            s  = vecSpecies[ispec];
-            p  = &(s->particles);
-            bmin = s->bmin[ibin];
-            bmax = s->bmax[ibin];
-            density     = 0.;
-            charge      = 0.;
-            temperature = 0.;
-            // loop particles to calculate average quantities
-            for (unsigned int iPart=bmin ; iPart<bmax ; iPart++ ) {
-                p2 = pow(p->momentum(0,iPart),2)+pow(p->momentum(1,iPart),2)+pow(p->momentum(2,iPart),2);
-                density     += p->weight(iPart);
-                charge      += p->weight(iPart) * p->charge(iPart);
-                temperature += p->weight(iPart) * p2/sqrt(1.+p2);
-            }
-            if (density <= 0.) continue;
-            charge /= density; // average charge
-            temperature *= (s->species_param.mass) / (3.*density); // Te in units of me*c^2
-            density /= params.n_cell_per_cluster; // density in units of critical density
-            // compute inverse debye length squared
-            if (temperature>0.) debye_length_squared[ibin] += density*charge*charge/temperature;
-            // compute maximum density of species
-            if (density>density_max) density_max = density;
-        }
-
-        // if there were particles,
-        if (debye_length_squared[ibin] > 0.) {
-            // compute debye length squared in code units
-            debye_length_squared[ibin] = 1./(debye_length_squared[ibin]);
-            // apply lower limit to the debye length (minimum interatomic distance)
-            rmin2 = pow(coeff*density_max, -2./3.);
-            if (debye_length_squared[ibin] < rmin2) debye_length_squared[ibin] = rmin2;
-        }
-
-    }
-
-#ifdef  __DEBUG
-    // calculate and print average debye length
-    double mean_debye_length = 0.;
-    for (unsigned int ibin=0 ; ibin<nbins ; ibin++)
-        mean_debye_length += sqrt(debye_length_squared[ibin]);
-    mean_debye_length /= (double)nbins;
-    //DEBUG("Mean Debye length in code length units = " << scientific << setprecision(3) << mean_debye_length);
-    mean_debye_length *= params.wavelength_SI/(2.*M_PI); // switch to SI
-    DEBUG("Mean Debye length in meters = " << scientific << setprecision(3) << mean_debye_length );
-#endif
 
 }
+
+
+
 
 
 // Calculates the collisions for a given Collisions2D object
@@ -168,16 +57,15 @@ void Collisions2D_DSMC::collide(PicParams& params, vector<Species*>& vecSpecies,
 {
 
     unsigned int nbins = vecSpecies[0]->bmin.size(); // number of bins
-    vector<unsigned int> *sg1, *sg2, *sgtmp, bmin1, bmax1, bmin2, bmax2, index1, index2;
+    vector<unsigned int> *sg1, *sg2, *sgtmp;
+    vector<int> bmin1, bmax1, bmin2, bmax2;
 
-
-    vector<vector<<vector int> > > index1, index2;
+    vector<vector<vector<int>>> index1, index2;
     vector<int> index1_tot, index2_tot;
     vector<int> n1, n2;
     vector<double> momentum_unit(3, 0.0), momentum_temp(3, 0.0);
     int idNew;
     int totNCollision = 0;
-    vector<int> bmin1, bmax1, bmin2, bmax2, bmin3, bmax3;
 
 
 
@@ -187,7 +75,7 @@ void Collisions2D_DSMC::collide(PicParams& params, vector<Species*>& vecSpecies,
     unsigned int npart1, npart2; // numbers of macro-particles in each group
     unsigned int npairs; // number of pairs of macro-particles
     vector<unsigned int> np1, np2; // numbers of macro-particles in each species, in each group
-    double n1, n2, n12, n123, n223; // densities of particles
+    double n12, n123, n223; // densities of particles
     unsigned int i1, i2, ispec1, ispec2;
     Species   *s1, *s2;
     Particles *p1, *p2;
@@ -198,6 +86,10 @@ void Collisions2D_DSMC::collide(PicParams& params, vector<Species*>& vecSpecies,
            logL, bmin, s, vrel, smax,
            cosX, sinX, phi, sinXcosPhi, sinXsinPhi, p_perp, inv_p_perp,
            newpx_COM, newpy_COM, newpz_COM, U, vcp;
+
+   double  sigma, sigma_cr, sigma_cr_max, sigma_cr_max_temp, cr, v_square, v_magnitude, ke1, ke_primary, ke_secondary,
+           ran, P_collision, ran_P, Pi;
+
     Field2D *smean, *logLmean, *ncol;//, *temperature
     ostringstream name;
     hid_t did;
@@ -245,8 +137,8 @@ void Collisions2D_DSMC::collide(PicParams& params, vector<Species*>& vecSpecies,
 
             for(int iPart = bmin1[ibin]; iPart < bmax1[ibin]; iPart++)
             {
-                double ypn = p1->position(1, ipart)*dy_inv_;
-                jp_ = floor(ypn);
+                double ypn = p1->position(1, iPart)*dy_inv_;
+                int jp_ = floor(ypn);
                 jp_ = jp_ - j_domain_begin;
                 index1[jp_][ispec1].push_back(iPart);
             }
@@ -292,7 +184,7 @@ void Collisions2D_DSMC::collide(PicParams& params, vector<Species*>& vecSpecies,
                 }
                 i1 += bmin1[ispec1];
                 // find species and index i2 of particle "2"
-                i2 = index2[i];
+                //i2 = index2[i];
                 for (ispec2=0 ; ispec2<nspec1 ; ispec2++) {
                     if (i2 < np1[ispec2]) break;
                     i2 -= np1[ispec2];
@@ -310,7 +202,7 @@ void Collisions2D_DSMC::collide(PicParams& params, vector<Species*>& vecSpecies,
                 sigma = evalSigma(cr);
                 sigma_cr = sigma * cr;
                 if(sigma_cr > sigma_cr_max_temp){
-                    sigma_cr_max_temp = sigma_cr
+                    sigma_cr_max_temp = sigma_cr;
                 }
                 P_collision = sigma_cr / sigma_cr_max;
                 double ran_p = (double)rand() / RAND_MAX;
@@ -332,56 +224,20 @@ void Collisions2D_DSMC::collide(PicParams& params, vector<Species*>& vecSpecies,
 }
 
 
-inline double relative_velocity(Particles* particle1, int iPart1, Particles* particle2, iPart2)
+
+
+void scatter_particles(Particles* particle1, int iPart1, Particles* particle2, int iPart2)
 {
     double rv;
     rv = sqrt( pow((particle1->momentum(0, iPart1) - particle2->momentum(0, iPart2)), 2)
             +  pow((particle1->momentum(1, iPart1) - particle2->momentum(1, iPart2)), 2)
             +  pow((particle1->momentum(2, iPart1) - particle2->momentum(2, iPart2)), 2)
             );
-    return rv;
 }
 
 
-
-inline double scatter_particles(Particles* particle1, int iPart1, Particles* particle2, iPart2)
-{
-    double rv;
-    rv = sqrt( pow((particle1->momentum(0, iPart1) - particle2->momentum(0, iPart2)), 2)
-            +  pow((particle1->momentum(1, iPart1) - particle2->momentum(1, iPart2)), 2)
-            +  pow((particle1->momentum(2, iPart1) - particle2->momentum(2, iPart2)), 2)
-            );
-    return rv;
-}
-
-
-
-// Technique given by Nanbu in http://dx.doi.org/10.1103/PhysRevE.55.4642
-//   to pick randomly the deflection angle cosine, in the center-of-mass frame.
-// It involves the "s" parameter (~ collision frequency * deflection expectation)
-//   and a random number "U".
-// Technique slightly modified in http://dx.doi.org/10.1063/1.4742167
-inline double Collisions2D_DSMC::cos_chi(double s)
+double evalSigma(double cr)
 {
 
-    double A, invA;
-    //!\todo make a faster rand by preallocating ??
-    double U = (double)rand() / RAND_MAX;
-
-    if( s < 0.1 ) {
-        if ( U<0.0001 ) U=0.0001; // ensures cos_chi > 0
-        return 1. + s*log(U);
-    }
-    if( s < 3.  ) {
-        // the polynomial has been modified from the article in order to have a better form
-        invA = 0.00569578 +(0.95602 + (-0.508139 + (0.479139 + ( -0.12789 + 0.0238957*s )*s )*s )*s )*s;
-        A = 1./invA;
-        return  invA  * log( exp(-A) + 2.*U*sinh(A) );
-    }
-    if( s < 6.  ) {
-        A = 3.*exp(-s);
-        return (1./A) * log( exp(-A) + 2.*U*sinh(A) );
-    }
-    return 2.*U - 1.;
 
 }

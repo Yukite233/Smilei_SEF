@@ -34,7 +34,7 @@ public:
 
     virtual double cos_chi(double);
 private:
-
+    inline double scatter_particles(Particles* particle1, int iPart1, Particles* particle2, iPart2)；
 
 };
 

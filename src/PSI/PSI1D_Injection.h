@@ -8,7 +8,7 @@
 #include "PicParams.h"
 #include "InputData.h"
 #include "Species.h"
-#include "PSI.h"
+#include "PSI1D.h"
 #include "H5.h"
 
 class PSI1D_Injection : public PSI1D

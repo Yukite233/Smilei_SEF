@@ -8,7 +8,7 @@
 #include "PicParams.h"
 #include "InputData.h"
 #include "Species.h"
-#include "PSI.h"
+#include "PSI1D.h"
 #include "H5.h"
 
 class PSI1D_SEE : public PSI1D
@@ -16,7 +16,7 @@ class PSI1D_SEE : public PSI1D
 
 public:
     //! Constructor for Collisions between two species
-    PSI1D_SEE(PicParams&,std::vector<Species*>&,SmileiMPI*,unsigned int,std::vector<unsigned int>,std::vector<unsigned int>,double,bool,int);
+    PSI1D_SEE();
     ~PSI1D_SEE();
 
 

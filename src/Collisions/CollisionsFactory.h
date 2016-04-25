@@ -46,7 +46,7 @@ public:
 	    for (unsigned int n_collisions = 0; n_collisions < numcollisions; n_collisions++) {
 
 			ifile.extract("collisions_type",collisions_type,"Collisions",n_collisions);
-			if(collisions_type == "coulomb"){
+			if(params.geometry == "1d3v" && collisions_type == "coulomb"){
 				MESSAGE("Parameters for collisions #" << n_collisions << " :");
 
 		        // Read the input file by searching for the keywords "species1" and "species2"
@@ -102,7 +102,7 @@ public:
 		        MESSAGE(1,"Debug                   : " << (debug_every<=0?"No debug":mystream.str()));
 
 		        // Add new Collisions objects to vector
-		        vecCollisions.push_back( new Collisions_Coulomb(params,vecSpecies,smpi,n_collisions,sgroup1,sgroup2,clog,intra,debug_every) );
+		        vecCollisions.push_back( new Collisions1D_Coulomb(params,vecSpecies,smpi,n_collisions,sgroup1,sgroup2,clog,intra,debug_every) );
 
 
 			}
@@ -111,28 +111,28 @@ public:
 
 				// Add new Collisions objects to vector
 				//> Three species participate in the ionization collision
-		        vecCollisions.push_back( new Collisions_Ionization(params,vecSpecies,smpi,n_collisions,sgroup1,sgroup2,clog,intra,debug_every) );
+		        vecCollisions.push_back( new Collisions1D_Ionization(params,vecSpecies,smpi,n_collisions,sgroup1,sgroup2,clog,intra,debug_every) );
 
 			}
 			else if(collisions_type == "DSMC"){
 				// Add new Collisions objects to vector
 				//> Only one species group participate in the ionization collision, all the particles from
 				//> different species are the same
-		        vecCollisions.push_back( new Collisions_DSMC(params,vecSpecies,smpi,n_collisions,sgroup1,sgroup2,clog,intra,debug_every) );
+		        vecCollisions.push_back( new Collisions1D_DSMC(params,vecSpecies,smpi,n_collisions,sgroup1,sgroup2,clog,intra,debug_every) );
 
 			}
 			else if(collisions_type == "ChargeExchange"){
 				// Add new Collisions objects to vector
 				//> Only one species group participate in the ionization collision, all the particles from
 				//> different species are the same
-		        vecCollisions.push_back( new Collisions_ChargeExchange(params,vecSpecies,smpi,n_collisions,sgroup1,sgroup2,clog,intra,debug_every) );
+		        vecCollisions.push_back( new Collisions1D_ChargeExchange(params,vecSpecies,smpi,n_collisions,sgroup1,sgroup2,clog,intra,debug_every) );
 
 			}
 			else if(collisions_type == "Elastic"){
 				// Add new Collisions objects to vector
 				//> Only one species group participate in the ionization collision, all the particles from
 				//> different species are the same
-		        vecCollisions.push_back( new Collisions_Elastic(params,vecSpecies,smpi,n_collisions,sgroup1,sgroup2,clog,intra,debug_every) );
+		        vecCollisions.push_back( new Collisions1D_Elastic(params,vecSpecies,smpi,n_collisions,sgroup1,sgroup2,clog,intra,debug_every) );
 
 			}
 			else {
@@ -146,7 +146,6 @@ public:
 	            ERROR("The parameter `wavelength_SI` needs to be defined and positive in order to compute collisions");
 
 	    // pass the variable "debye_length_required" into the Collision class
-	    Collisions::debye_length_required = debye_length_required;
 
 	    return vecCollisions;
 	};

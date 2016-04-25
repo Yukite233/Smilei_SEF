@@ -9,7 +9,6 @@
 #include <omp.h>
 
 #include "PusherFactory.h"
-#include "IonizationFactory.h"
 
 #include "PartBoundCond.h"
 //#include "BoundaryConditionType.h"
@@ -141,8 +140,6 @@ min_loc(smpi->getDomainLocalMin(0))
     // assign the correct Pusher to Push
     Push = PusherFactory::create( params, ispec );
 
-    // assign the Ionization model (if needed) to Ionize
-    Ionize = IonizationFactory::create( params, ispec, max_charge);
     if (Ionize) DEBUG("Species " << ispec << " can be ionized!");
 
     // define limits for BC and functions applied and for domain decomposition
@@ -451,16 +448,6 @@ void Species::dynamics(double time_dual, unsigned int ispec, ElectroMagn* EMfiel
                 //if(Epart.x != 0.0 || Epart.y != 0.0 || Epart.z != 0.0 || Bpart.x != 0.0 || Bpart.y != 0.0 || Bpart.z != 0.0){
                 //    cout<<iPart<<"local field not zero  "<<Epart.x<<" "<<Epart.y<<" "<<Epart.z<<" "<<Bpart.x<<" "<<Bpart.y<<" "<<Bpart.z<<endl;
                 //}
-
-                // Do the ionization (!for testParticles)
-                if (Ionize && particles.charge(iPart) < (int) species_param.atomic_number) {
-                    //!\todo Check if it is necessary to put to 0 or if LocalFields ensures it
-                    Jion.x=0.0;
-                    Jion.y=0.0;
-                    Jion.z=0.0;
-                    (*Ionize)(particles, iPart, Epart, Jion);
-                    (*Proj)(EMfields->Jx_, EMfields->Jy_, EMfields->Jz_, particles, iPart, Jion);
-                }
 
 
                 // Push the particle

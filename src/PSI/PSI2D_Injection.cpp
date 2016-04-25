@@ -14,16 +14,8 @@ using namespace std;
 
 
 // Constructor
-PSI2D_Injection::PSI2D_Injection(PicParams& param, vector<Species*>& vecSpecies, SmileiMPI* smpi,
-                       unsigned int n_PSI,
-                       vector<unsigned int> species1,)
+PSI2D_Injection::PSI2D_Injection()
 {
-
-    n_PSI    		= (n_PSI    );
-    species_group1  = (species_group1  );
-    start           = (0               );
-
-
 
 
 }

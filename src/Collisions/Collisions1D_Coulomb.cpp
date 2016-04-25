@@ -39,39 +39,7 @@ Collisions1D_Coulomb::Collisions1D_Coulomb(PicParams& param, vector<Species*>& v
     //MPI_Allreduce( smpi->isMaster()?MPI_IN_PLACE:&totbins, &totbins, 1, MPI_INTEGER, MPI_SUM, MPI_COMM_WORLD);
     MPI_Reduce( smpi->isMaster()?MPI_IN_PLACE:&totbins, &totbins, 1, MPI_INTEGER, MPI_SUM, 0, MPI_COMM_WORLD);
 
-    // if debug requested, prepare hdf5 file
-    fileId = 0;
-    if( debug_every>0 ) {
-        ostringstream mystream;
-        mystream.str("");
-        mystream << "Collisions1D" << n_collisions << ".h5";
-        // Create the HDF5 file
-        hid_t pid = H5Pcreate(H5P_FILE_ACCESS);
-        H5Pset_fapl_mpio(pid, MPI_COMM_WORLD, MPI_INFO_NULL);
-        fileId = H5Fcreate(mystream.str().c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, pid);
-        H5Pclose(pid);
-        // write all parameters as HDF5 attributes
-        string ver(__VERSION);
-        H5::attr(fileId, "Version", ver);
-        mystream.str("");
-        mystream << species_group1[0];
-        for(unsigned int i=1; i<species_group1.size(); i++) mystream << "," << species_group1[i];
-        H5::attr(fileId, "species1" , mystream.str());
-        mystream.str("");
-        mystream << species_group2[0];
-        for(unsigned int i=1; i<species_group2.size(); i++) mystream << "," << species_group2[i];
-        H5::attr(fileId, "species2" , mystream.str());
-        H5::attr(fileId, "coulomb_log" , coulomb_log);
-        H5::attr(fileId, "debug_every"  , debug_every);
 
-        // Find out where the proc will start writing in the overall array
-        MPI_Status status;
-        // Receive the location where to start from the previous node
-        if (smpi->getRank()>0) MPI_Recv( &(start), 1, MPI_INTEGER, smpi->getRank()-1, 0, MPI_COMM_WORLD, &status );
-        // Send the location where to end to the next node
-        int end = start+nbins;
-        if (smpi->getRank()!=smpi->getSize()-1) MPI_Send( &end, 1, MPI_INTEGER, smpi->getRank()+1, 0, MPI_COMM_WORLD );
-    }
 
 }
 
@@ -79,11 +47,6 @@ Collisions1D_Coulomb::~Collisions1D_Coulomb()
 {
     if (fileId != 0) H5Fclose(fileId);
 }
-
-
-// Declare other static variables here
-bool               Collisions1D::debye_length_required;
-vector<double>     Collisions1D::debye_length_squared;
 
 
 
