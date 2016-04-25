@@ -1,4 +1,4 @@
-#include "PSI_Sputtering.h"
+#include "PSI1D_Sputtering.h"
 #include "SmileiMPI.h"
 #include "Field2D.h"
 #include "H5.h"
@@ -14,12 +14,12 @@ using namespace std;
 
 
 // Constructor
-PSI_Sputtering::PSI_Sputtering(PicParams& param, vector<Species*>& vecSpecies, SmileiMPI* smpi,
-                       unsigned int n_PSI,
+PSI1D_Sputtering::PSI1D_Sputtering(PicParams& param, vector<Species*>& vecSpecies, SmileiMPI* smpi,
+                       unsigned int n_PSI1D,
                        vector<unsigned int> species1)
 {
 
-    n_PSI    		= (n_PSI    );
+    n_PSI1D    		= (n_PSI1D    );
     species1  		= (species1  );
     start           = (0         );
 
@@ -28,15 +28,15 @@ PSI_Sputtering::PSI_Sputtering(PicParams& param, vector<Species*>& vecSpecies, S
 
 }
 
-PSI_Sputtering::~PSI_Sputtering()
+PSI1D_Sputtering::~PSI1D_Sputtering()
 {
-    if (fileId != 0) H5Fclose(fileId);
+
 }
 
 
 
-// Calculates the PSI for a given Collisions object
-void PSI_Sputtering::performPSI(PicParams& params, vector<Species*>& vecSpecies, int itime)
+// Calculates the PSI1D for a given Collisions object
+void PSI1D_Sputtering::performPSI(PicParams& params, vector<Species*>& vecSpecies, int itime)
 {
 
     unsigned int nbins = vecSpecies[0]->bmin.size(); // number of bins

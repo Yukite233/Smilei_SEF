@@ -1,6 +1,6 @@
 
-#ifndef PSI_SEE_H
-#define PSI_SEE_H
+#ifndef PSI2D_SEE_H
+#define PSI2D_SEE_H
 
 #include <vector>
 
@@ -8,20 +8,20 @@
 #include "PicParams.h"
 #include "InputData.h"
 #include "Species.h"
-#include "PSI.h"
+#include "PSI2D.h"
 #include "H5.h"
 
-class PSI_SEE : public PSI
+class PSI2D_SEE : public PSI2D
 {
 
 public:
     //! Constructor for Collisions between two species
-    PSI_SEE(PicParams&,std::vector<Species*>&,SmileiMPI*,unsigned int,std::vector<unsigned int>,std::vector<unsigned int>,double,bool,int);
-    ~PSI_SEE();
+    PSI2D_SEE(PicParams&,std::vector<Species*>&,SmileiMPI*,unsigned int,std::vector<unsigned int>,std::vector<unsigned int>,double,bool,int);
+    ~PSI2D_SEE();
 
 
 
-    //! Method called in the main smilei loop to apply collisions at each timestep
+    //! Method called in the main smilei loop to apply PSI at each timestep
     void performPSI(PicParams&,std::vector<Species*>&,int);
 
 private:

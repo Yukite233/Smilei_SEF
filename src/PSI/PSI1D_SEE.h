@@ -1,6 +1,6 @@
 
-#ifndef PSI_SEE_H
-#define PSI_SEE_H
+#ifndef PSI1D_SEE_H
+#define PSI1D_SEE_H
 
 #include <vector>
 
@@ -11,13 +11,13 @@
 #include "PSI.h"
 #include "H5.h"
 
-class PSI_SEE : public PSI
+class PSI1D_SEE : public PSI1D
 {
 
 public:
     //! Constructor for Collisions between two species
-    PSI_SEE(PicParams&,std::vector<Species*>&,SmileiMPI*,unsigned int,std::vector<unsigned int>,std::vector<unsigned int>,double,bool,int);
-    ~PSI_SEE();
+    PSI1D_SEE(PicParams&,std::vector<Species*>&,SmileiMPI*,unsigned int,std::vector<unsigned int>,std::vector<unsigned int>,double,bool,int);
+    ~PSI1D_SEE();
 
 
 

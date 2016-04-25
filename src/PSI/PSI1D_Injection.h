@@ -1,6 +1,6 @@
 
-#ifndef PSI_INJECTION_H
-#define PSI_INJECTION_H
+#ifndef PSI1D_INJECTION_H
+#define PSI1D_INJECTION_H
 
 #include <vector>
 
@@ -11,13 +11,13 @@
 #include "PSI.h"
 #include "H5.h"
 
-class PSI_Injection : public PSI
+class PSI1D_Injection : public PSI1D
 {
 
 public:
     //! Constructor for Collisions between two species
-    PSI_Injection(PicParams&,std::vector<Species*>&,SmileiMPI*,unsigned int,std::vector<unsigned int>,std::vector<unsigned int>,double,bool,int);
-    ~PSI_Injection();
+    PSI1D_Injection();
+    ~PSI1D_Injection();
 
 
 

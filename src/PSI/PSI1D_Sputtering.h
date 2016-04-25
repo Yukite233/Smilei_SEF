@@ -1,6 +1,6 @@
 
-#ifndef PSI_SPUTTERING_H
-#define PSI_SPUTTERING_H
+#ifndef PSI1D_SPUTTERING_H
+#define PSI1D_SPUTTERING_H
 
 #include <vector>
 
@@ -8,20 +8,20 @@
 #include "PicParams.h"
 #include "InputData.h"
 #include "Species.h"
-#include "PSI.h"
+#include "PSI1D.h"
 #include "H5.h"
 
-class PSI_Sputtering : public PSI
+class PSI1D_Sputtering : public PSI1D
 {
 
 public:
     //! Constructor for Collisions between two species
-    PSI_Sputtering(PicParams&,std::vector<Species*>&,SmileiMPI*,unsigned int,std::vector<unsigned int>,std::vector<unsigned int>,double,bool,int);
-    ~PSI_Sputtering();
+    PSI1D_Sputtering();
+    ~PSI1D_Sputtering();
 
 
 
-    //! Method called in the main smilei loop to apply collisions at each timestep
+    //! Method called in the main smilei loop to apply PSI at each timestep
     void performPSI(PicParams&,std::vector<Species*>&,int);
 
 private:

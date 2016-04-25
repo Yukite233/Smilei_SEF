@@ -1,6 +1,6 @@
 /*
 
-Collisions class - Frederic Perez - 03/2015
+Collisions2D class - Frederic Perez - 03/2015
 
 This is based on the work described here
 http://dx.doi.org/10.1063/1.4742167
@@ -16,18 +16,18 @@ similar to the following:
 # species2    = list of strings, the names of the second species that collide
 #               (can be the same as species1)
 # coulomb_log = float, Coulomb logarithm. If negative or zero, then automatically computed.
-Collisions(
+Collisions2D(
 	species1 = ["ion1"],
 	species2 = ["electron1"],
 	coulomb_log = 2.0
 )
 
-Several collision types can be defined. For each type, add a group "Collisions()".
+Several collision types can be defined. For each type, add a group "Collisions2D()".
 
 */
 
-#ifndef COLLISIONS_COULOMB_H
-#define COLLISIONS_COULOMB_H
+#ifndef COLLISIONS2D_COULOMB_H
+#define COLLISIONS2D_COULOMB_H
 
 #include <vector>
 
@@ -35,16 +35,16 @@ Several collision types can be defined. For each type, add a group "Collisions()
 #include "PicParams.h"
 #include "InputData.h"
 #include "Species.h"
-#include "Collisions.h"
+#include "Collisions2D.h"
 #include "H5.h"
 
-class Collisions_Coulomb : public Collisions
+class Collisions2D_Coulomb : public Collisions2D
 {
 
 public:
-    //! Constructor for Collisions between two species
-    Collisions_Coulomb(PicParams&,std::vector<Species*>&,SmileiMPI*,unsigned int,std::vector<unsigned int>,std::vector<unsigned int>,double,bool,int);
-    ~Collisions_Coulomb();
+    //! Constructor for Collisions2D between two species
+    Collisions2D_Coulomb(PicParams&,std::vector<Species*>&,SmileiMPI*,unsigned int,std::vector<unsigned int>,std::vector<unsigned int>,double,bool,int);
+    ~Collisions2D_Coulomb();
 
 
     //! Coulomb logarithm (zero or negative means automatic)

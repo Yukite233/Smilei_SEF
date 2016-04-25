@@ -1,11 +1,13 @@
 #ifndef PSIFACTORY_H
 #define PSIFACTORY_H
 
-#include "PSI.h"
-#include "PSI_Injection.h"
-#include "PSI_SEE.h"
-#include "PSI_Sputtering.h"
+#include "PSI1D_Injection.h"
+#include "PSI1D_SEE.h"
+#include "PSI1D_Sputtering.h"
 
+#include "PSI2D_Injection.h"
+#include "PSI2D_SEE.h"
+#include "PSI2D_Sputtering.h"
 
 #include <string>
 #include <cmath>

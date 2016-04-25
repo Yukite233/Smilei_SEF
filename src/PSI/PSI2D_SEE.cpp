@@ -1,4 +1,4 @@
-#include "PSI_SEE.h"
+#include "PSI2D_SEE.h"
 #include "SmileiMPI.h"
 #include "Field2D.h"
 #include "H5.h"
@@ -14,7 +14,7 @@ using namespace std;
 
 
 // Constructor
-PSI_SEE::PSI_SEE(PicParams& param, vector<Species*>& vecSpecies, SmileiMPI* smpi,
+PSI2D_SEE::PSI2D_SEE(PicParams& param, vector<Species*>& vecSpecies, SmileiMPI* smpi,
                        unsigned int n_PSI,
                        vector<unsigned int> species1)
 {
@@ -28,15 +28,15 @@ PSI_SEE::PSI_SEE(PicParams& param, vector<Species*>& vecSpecies, SmileiMPI* smpi
 
 }
 
-PSI_SEE::~PSI_SEE()
+PSI2D_SEE::~PSI2D_SEE()
 {
-    if (fileId != 0) H5Fclose(fileId);
+
 }
 
 
 
-// Calculates the PSI for a given Collisions object
-void PSI_SEE::performPSI(PicParams& params, vector<Species*>& vecSpecies, int itime)
+// Calculates the PSI2D for a given Collisions object
+void PSI2D_SEE::performPSI(PicParams& params, vector<Species*>& vecSpecies, int itime)
 {
 
     unsigned int nbins = vecSpecies[0]->bmin.size(); // number of bins

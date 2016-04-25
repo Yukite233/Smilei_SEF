@@ -1,8 +1,18 @@
 #ifndef COLLISIONSFACTORY_H
 #define COLLISIONSFACTORY_H
 
-#include "Collisions.h"
-#include "Collisions_Coulomb.h"
+#include "Collisions1D_ChargeExchange.h"
+#include "Collisions1D_Coulomb.h"
+#include "Collisions1D_DSMC.h"
+#include "Collisions1D_Elastic.h"
+#include "Collisions1D_Ionization.h"
+
+#include "Collisions2D_ChargeExchange.h"
+#include "Collisions2D_Coulomb.h"
+#include "Collisions2D_DSMC.h"
+#include "Collisions2D_Elastic.h"
+#include "Collisions2D_Ionization.h"
+
 
 
 #include <string>
