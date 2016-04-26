@@ -40,11 +40,6 @@ public:
     //! Basic method to sum a field
     virtual void sumField      ( Field* field );
 
-    void scatterGrid( Grid* grid );
-    void gatherField( Field* field_global ,Field* field  );
-    void scatterField( Field* field_global ,Field* field );
-
-
 
     //! Return coordinates in the cartesian MPI communicator
     //! \param i direction
@@ -77,8 +72,9 @@ public:
     //! Identify corner MPI ranks (2D, 2 sides)
     int extrem_ranks[2][2];
 
-	// global dimensions (including ghost grid points) of each process stored in ROOT process for gathering and scattering
-	int dims_global_gather[2];
+    void scatterGrid( Grid* grid );
+    void gatherField( Field* field_global ,Field* field  );
+    void scatterField( Field* field_global ,Field* field );
 
 
 protected:

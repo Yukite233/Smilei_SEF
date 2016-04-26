@@ -13,7 +13,7 @@
 
 #include "Tools.h"
 
-#include "Field2D.h"
+#include "Field1D.h"
 
 using namespace std;
 
@@ -126,6 +126,48 @@ void SmileiMPI_Cart1D::createTopology(PicParams& params)
         cell_starting_global_index[i] -= params.oversize[i];
 
     }
+
+
+    //>>>calculate nspace_global_gather to gather and scatter the Field and Grid data
+    dims_global_gather[0] = n_space_global[0]+(1+2*params.oversize[0])*number_of_procs[0];
+
+    grid_global_gather= new int[dims_global_gather[0]];
+    field_global_gather= new double[dims_global_gather[0]];
+
+    dims_gather         = new int[smilei_sz];
+    dims_gather_temp    = new int[smilei_sz];
+    for (unsigned int i=0;i< smilei_sz ; i++)
+    {
+    	if(i==smilei_rk){
+    		dims_gather_temp[i]     = params.n_space[0] + 1 + 2*params.oversize[0];
+            cout<<"dims_gather "<<params.n_space[0]<<" "<<params.number_of_procs[0]<<endl;
+    	}
+    	else {
+    		dims_gather_temp[i]     = 0;
+    	}
+
+    }
+
+    MPI_Allreduce(dims_gather_temp, dims_gather, smilei_sz, MPI_INT,MPI_SUM, SMILEI_COMM_1D);
+
+    recv_disp.resize(smilei_sz);
+    recv_cnt.resize(smilei_sz);
+    send_disp.resize(smilei_sz);
+    send_cnt.resize(smilei_sz);
+    for(int i = 0; i < smilei_sz; i++)
+    {
+        recv_cnt[i] = dims_gather[i];
+        send_cnt[i] = dims_gather[i];
+        if(i == 0){
+            recv_disp[i] = 0;
+            send_disp[i] = 0;
+        }
+        else{
+            recv_disp[i] = recv_disp[i-1] + recv_cnt[i-1];
+            send_disp[i] = send_disp[i-1] + send_cnt[i-1];
+        }
+    }
+
 
     //DEBUG(3, smilei_rk, "n_space = " << params.n_space[0] );
 
@@ -529,3 +571,100 @@ void SmileiMPI_Cart1D::sumField( Field* field )
 
 
 } // END sumField
+
+
+
+
+
+
+void SmileiMPI_Cart1D::gatherField( Field* field_global ,Field* field  )
+{
+
+    int procs_rk;
+    int iGlobal, jGlobal;
+    int iGlobal_gather;
+    int nx;
+
+    Field1D* f1D =  static_cast<Field1D*>(field);
+    Field1D* f1D_global =  static_cast<Field1D*>(field_global);
+    nx = f1D_global->dims_[0];
+    f1D_global->put_to(0.0);
+    MPI_Gatherv(f1D->data_, send_cnt[smilei_rk], MPI_DOUBLE, field_global_gather, &recv_cnt[0], &recv_disp[0], MPI_DOUBLE, 0, SMILEI_COMM_1D);
+
+    for(int iProcs = 0; iProcs < number_of_procs[0]; iProcs++)
+    {
+        procs_rk = iProcs;
+        for(int i = 0; i < dims_gather[procs_rk]; i++)
+        {
+            iGlobal = iProcs * (dims_gather[0] - 2*oversize[0] -1) + i -oversize[0];
+            if(iProcs == 0 && i < oversize[0] || iProcs == number_of_procs[0] -1 && i > dims_gather[procs_rk*2] - 1 - oversize[0]){
+                iGlobal = abs((int)f1D_global->dims_[0] - abs(iGlobal) - 1);
+            }
+
+            iGlobal_gather = send_disp[procs_rk] + i;
+            //if(iGlobal >= ii || jGlobal >= jj) cout<<"error "<<iGlobal<<" "<<iProcs<<" "<<dims_gather[0]<<" "<<oversize[0]<<endl;
+
+            f1D_global->data_[iGlobal] += field_global_gather[iGlobal_gather];
+            //if(f1D_global->data_[iGlobal] != 0.0) cout<<"ereeee"; //<<f1D_global->data_[iGlobal]<<endl;
+        }
+    }
+
+    for(int i = 0; i < nx; i++)
+    {
+        if( i == 0){
+            f1D_global->data_[i] += f1D_global->data_[nx-1];
+        }
+    }
+
+    for(int i = 0; i < nx; i++)
+    {
+        if( i == nx-1){
+            f1D_global->data_[i] = f1D_global->data_[0];
+        }
+
+    }
+
+
+
+} // END gatherField
+
+
+
+void SmileiMPI_Cart1D::scatterField( Field* field_global ,Field* field )
+{
+
+    int procs_rk;
+    int iGlobal, jGlobal;
+    int iGlobal_gather;
+
+    Field1D* f1D =  static_cast<Field1D*>(field);
+    Field1D* f1D_global =  static_cast<Field1D*>(field_global);
+
+    int ii;
+    ii=f1D_global->dims_[0];
+
+    iGlobal = 0;
+
+
+
+    for(int iProcs = 0; iProcs < number_of_procs[0]; iProcs++)
+    {
+        procs_rk = iProcs;
+        for(int i = 0; i < dims_gather[procs_rk*2]; i++)
+        {
+            iGlobal = iProcs * (dims_gather[0] - 2*oversize[0] -1) + i -oversize[0];
+            if(iProcs == 0 && i < oversize[0] || iProcs == number_of_procs[0] -1 && i > dims_gather[procs_rk*2] - 1 - oversize[0]){
+                iGlobal = abs((int)f1D_global->dims_[0] - abs(iGlobal) - 1);
+            }
+
+            iGlobal_gather = send_disp[procs_rk] + i;
+            //if(iGlobal >= ii || jGlobal >= jj) cout<<"error "<<iGlobal<<" "<<iProcs<<" "<<dims_gather[0]<<" "<<oversize[0]<<endl;
+
+            field_global_gather[iGlobal_gather] = f1D_global->data_[iGlobal];
+
+            //if(f1D_global->data_[iGlobal] != 0.0) cout<<"ereeee"; //<<f1D_global->data_[iGlobal]<<endl;
+        }
+    }
+    MPI_Scatterv(field_global_gather, &send_cnt[0], &send_disp[0], MPI_DOUBLE, f1D->data_, recv_cnt[smilei_rk], MPI_DOUBLE, 0, SMILEI_COMM_1D);
+
+} // END scatterField

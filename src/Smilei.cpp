@@ -138,6 +138,7 @@ int main (int argc, char* argv[])
     // ------------------------------------------------------------------------------------
 
     vector<Collisions*> vecCollisions = CollisionsFactory::create(params, input_data, vecSpecies, smpi);
+    vector<PSI*> vecPSI = PSIFactory::create(params, input_data, vecSpecies, smpi);
 
 
     TITLE("Creating Interp/Proj");
@@ -183,9 +184,9 @@ int main (int argc, char* argv[])
         // -----------------------------
         for (unsigned int icoll=0 ; icoll<vecCollisions.size(); icoll++)
         {
-            if (vecCollisions[icoll]->debye_length_required){
-                vecCollisions[icoll]->calculate_debye_length(params,vecSpecies);
-            }
+            //if (vecCollisions[icoll]->debye_length_required){
+            //    vecCollisions[icoll]->calculate_debye_length(params,vecSpecies);
+            //}
             vecCollisions[icoll]->collide(params,vecSpecies,itime);
         }
 

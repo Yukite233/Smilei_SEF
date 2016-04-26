@@ -23,7 +23,7 @@ PSI2D_Sputtering::PSI2D_Sputtering()
 
 PSI2D_Sputtering::~PSI2D_Sputtering()
 {
-    if (fileId != 0) H5Fclose(fileId);
+
 }
 
 

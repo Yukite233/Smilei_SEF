@@ -41,7 +41,7 @@ public:
 
 
 private:
-
+    hid_t fileId;
 
 };
 

@@ -46,6 +46,7 @@ isEastern(smpi->isEastern())
     // dimPrim/dimDual = nx_p/nx_d
     dimPrim.resize( nDim_field );
     dimDual.resize( nDim_field );
+    dim_global.resize( nDim_field );
     for (size_t i=0 ; i<nDim_field ; i++) {
         // Standard scheme
         dimPrim[i] = n_space[i]+1;
@@ -53,18 +54,19 @@ isEastern(smpi->isEastern())
         // + Ghost domain
         dimPrim[i] += 2*oversize[i];
         dimDual[i] += 2*oversize[i];
+        dim_global[i] = n_space_global[i] + 1;
     }
 
     // Allocation of the EM fields
-    Ex_  = new Field1D(dimPrim, 0, false, "Ex");
-    Ey_  = new Field1D(dimPrim, 1, false, "Ey");
-    Ez_  = new Field1D(dimPrim, 2, false, "Ez");
-    Bx_  = new Field1D(dimPrim, 0, true,  "Bx");
-    By_  = new Field1D(dimPrim, 1, true,  "By");
-    Bz_  = new Field1D(dimPrim, 2, true,  "Bz");
-    Bx_m = new Field1D(dimPrim, 0, true,  "Bx_m");
-    By_m = new Field1D(dimPrim, 1, true,  "By_m");
-    Bz_m = new Field1D(dimPrim, 2, true,  "Bz_m");
+    Ex_  = new Field1D(dimPrim, "Ex");
+    Ey_  = new Field1D(dimPrim, "Ey");
+    Ez_  = new Field1D(dimPrim, "Ez");
+    Bx_  = new Field1D(dimPrim, "Bx");
+    By_  = new Field1D(dimPrim, "By");
+    Bz_  = new Field1D(dimPrim, "Bz");
+    Bx_m = new Field1D(dimPrim, "Bx_m");
+    By_m = new Field1D(dimPrim, "By_m");
+    Bz_m = new Field1D(dimPrim, "Bz_m");
 
     // for (unsigned int i=0 ; i<nx_d ; i++) {
     //         double x = ( (double)(smpi1D->getCellStartingGlobalIndex(0)+i-0.5) )*params.cell_length[0];
@@ -77,25 +79,48 @@ isEastern(smpi->isEastern())
     //     }
     //
     // Allocation of time-averaged EM fields
-    Ex_avg  = new Field1D(dimPrim, 0, false, "Ex_avg");
-    Ey_avg  = new Field1D(dimPrim, 1, false, "Ey_avg");
-    Ez_avg  = new Field1D(dimPrim, 2, false, "Ez_avg");
-    Bx_avg  = new Field1D(dimPrim, 0, true,  "Bx_avg");
-    By_avg  = new Field1D(dimPrim, 1, true,  "By_avg");
-    Bz_avg  = new Field1D(dimPrim, 2, true,  "Bz_avg");
+    Ex_avg  = new Field1D(dimPrim, "Ex_avg");
+    Ey_avg  = new Field1D(dimPrim, "Ey_avg");
+    Ez_avg  = new Field1D(dimPrim, "Ez_avg");
+    Bx_avg  = new Field1D(dimPrim, "Bx_avg");
+    By_avg  = new Field1D(dimPrim, "By_avg");
+    Bz_avg  = new Field1D(dimPrim, "Bz_avg");
 
     // Total charge currents and densities
-    Jx_   = new Field1D(dimPrim, 0, false, "Jx");
-    Jy_   = new Field1D(dimPrim, 1, false, "Jy");
-    Jz_   = new Field1D(dimPrim, 2, false, "Jz");
+    Jx_   = new Field1D(dimPrim, "Jx");
+    Jy_   = new Field1D(dimPrim, "Jy");
+    Jz_   = new Field1D(dimPrim, "Jz");
     rho_  = new Field1D(dimPrim, "Rho" );
+
+
+    rho_global = new Field1D(dim_global, "Rho_global");
+    phi_global = new Field1D(dim_global, "Phi_global");
+    Ex_global  = new Field1D(dim_global, "Ex_global");
+    Ey_global  = new Field1D(dim_global, "Ey_global");
+    Ez_global  = new Field1D(dim_global, "Ez_global");
+
+    rho_global->put_to(0.0);
+    phi_global->put_to(0.0);
+
+    Ex_->put_to(0.0);
+    Ey_->put_to(0.0);
+    Ez_->put_to(0.0);
+    Bx_->put_to(0.0);
+    By_->put_to(0.0);
+    Bz_->put_to(0.0);
+    Bx_m->put_to(0.0);
+    By_m->put_to(0.0);
+    Bz_m->put_to(0.0);
+    rho_->put_to(0.0);
+
+
 
     // Charge currents currents and density for each species
 
     for (unsigned int ispec=0; ispec<n_species; ispec++) {
-        Jx_s[ispec]  = new Field1D(dimPrim, 0, false, ("Jx_"+params.species_param[ispec].species_type).c_str());
-        Jy_s[ispec]  = new Field1D(dimPrim, 1, false, ("Jy_"+params.species_param[ispec].species_type).c_str());
-        Jz_s[ispec]  = new Field1D(dimPrim, 2, false, ("Jz_"+params.species_param[ispec].species_type).c_str());
+        Jx_s[ispec]  = new Field1D(dimPrim, ("Jx_"+params.species_param[ispec].species_type).c_str());
+        Jy_s[ispec]  = new Field1D(dimPrim, ("Jy_"+params.species_param[ispec].species_type).c_str());
+        Jz_s[ispec]  = new Field1D(dimPrim, ("Jz_"+params.species_param[ispec].species_type).c_str());
         rho_s[ispec] = new Field1D(dimPrim, ("Rho_"+params.species_param[ispec].species_type).c_str());
     }
 

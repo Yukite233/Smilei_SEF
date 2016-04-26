@@ -2,12 +2,14 @@
 #define INTERPOLATORFACTORY_H
 
 #include "Interpolator.h"
+#include "Interpolator1D1Order.h"
 #include "Interpolator1D2Order.h"
 #include "Interpolator1D3Order.h"
 #include "Interpolator1D4Order.h"
+#include "Interpolator2D1Order.h"
 #include "Interpolator2D2Order.h"
 #include "Interpolator2D4Order.h"
-#include "Interpolator2D1Order.h"
+
 
 #include "PicParams.h"
 #include "SmileiMPI.h"
@@ -21,8 +23,8 @@ public:
         // ---------------
         // 1d3v simulation
         // ---------------
-        if ( ( params.geometry == "1d3v" ) && ( params.interpolation_order == 2 ) ) {
-            Interp = new Interpolator1D2Order(params, smpi);
+        if ( ( params.geometry == "1d3v" ) && ( params.interpolation_order == 1 ) ) {
+            Interp = new Interpolator1D1Order(params, smpi);
         }
         else if ( ( params.geometry == "1d3v" ) && ( params.interpolation_order == 4 ) ) {
             Interp = new Interpolator1D4Order(params, smpi);

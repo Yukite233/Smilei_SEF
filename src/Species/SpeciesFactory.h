@@ -65,6 +65,9 @@ public:
             MESSAGE(1,"Species " << ispec << " (" << params.species_param[ispec].species_type << ") created with " << nPart << " particles" );
         } // END for ispec
 
+
+        /* origin ionization class has been deleted, and electron impact ionization is
+        included in Collisions class
         // add the found electron species to the ionizable species
         for (unsigned int ispec=0 ; ispec<params.species_param.size() ; ispec++) {
             if (vecSpecies[ispec]->Ionize)  {
@@ -76,6 +79,7 @@ public:
                 }
             }
         } // END for ispec
+        */
 
         return vecSpecies;
     }

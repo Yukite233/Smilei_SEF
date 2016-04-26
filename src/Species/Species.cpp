@@ -140,7 +140,7 @@ min_loc(smpi->getDomainLocalMin(0))
     // assign the correct Pusher to Push
     Push = PusherFactory::create( params, ispec );
 
-    if (Ionize) DEBUG("Species " << ispec << " can be ionized!");
+
 
     // define limits for BC and functions applied and for domain decomposition
     partBoundCond = new PartBoundCond( params, ispec, smpi);
@@ -169,7 +169,6 @@ min_loc(smpi->getDomainLocalMin(0))
 Species::~Species()
 {
     delete Push;
-    if (Ionize) delete Ionize;
     if (partBoundCond) delete partBoundCond;
     if (chargeProfile) delete chargeProfile;
     if (densityProfile) delete densityProfile;
@@ -545,29 +544,7 @@ void Species::dynamics(double time_dual, unsigned int ispec, ElectroMagn* EMfiel
         for (unsigned int ithd=0 ; ithd<nrj_lost_per_thd.size() ; ithd++)
             nrj_bc_lost += nrj_lost_per_thd[ithd];
 }
-        if (Ionize && electron_species) {
-            for (unsigned int i=0; i < (unsigned int)Ionize->new_electrons.size(); i++) {
-                // electron_species->particles.push_back(Ionize->new_electrons[i]);
-
-                int ibin = (int) ((Ionize->new_electrons).position(0,i) / cell_length[0]) - ( smpi->getCellStartingGlobalIndex(0) + oversize[0] );
-                DEBUG("here " << ibin << " " << (Ionize->new_electrons).position(0,i)/(2*M_PI));
-                // Copy Ionize->new_electrons(i) in electron_species->particles at position electron_species->bmin[ibin]
-                Ionize->new_electrons.cp_particle(i, electron_species->particles, electron_species->bmin[ibin] );
-
-                // Update bins status
-                // (ugly update, memory is allocated anywhere, OK with vectors per particles parameters)
-                electron_species->bmax[ibin]++;
-                for (int i=(int)ibin+1; i<(int)bmin.size(); i++) {
-                    electron_species->bmin[i]++;
-                    electron_species->bmax[i]++;
-                }
-                DEBUG("here");
-            }
-
-            // if (Ionize->new_electrons.size())
-            //      DEBUG("number of electrons " << electron_species->particles.size() << " " << );
-            Ionize->new_electrons.clear();
-        }
+        
     }
     else if (!particles.isTestParticles) { // immobile particle (at the moment only project density)
 //#pragma omp for schedule (runtime)

@@ -42,9 +42,6 @@ public:
     //! @see n_space_global
     void init( PicParams& params );
 
-    virtual void scatterGrid( Grid* grid ){};
-    virtual void gatherField( Field* field_global ,Field* field  ){};
-    virtual void scatterField( Field* field_global ,Field* field ){};
 
     //! Create MPI communicator
     virtual void createTopology( PicParams& params ) {};
@@ -150,10 +147,19 @@ public:
     void bcast( std::string& val );
 
 
+    virtual void scatterGrid( Grid* grid ){};
+    virtual void gatherField( Field* field_global ,Field* field  ){};
+    virtual void scatterField( Field* field_global ,Field* field ){};
+
+
     //! Real (exclunding oversize) global number of cells (res_space x sim_length)
     std::vector<int> n_space_global;
   	//>>> (inclunding oversize) global number of cells (res_space x sim_length) to MPI_GaterV and MPI_scatter
     std::vector<int> n_space_global_gather;
+
+    //> global dimensions (including ghost grid points) of each process stored in ROOT process for gathering
+    //> and scattering, only dims_global_gather[0] is used for 1d.
+	int dims_global_gather[2];
 
 	//>>>variables for MPI_GaterV and MPI_scatter (grid, rho, phi)
 	int* grid_global_gather;

@@ -2,11 +2,13 @@
 #define PROJECTORFACTORY_H
 
 #include "Projector.h"
+#include "Projector1D1Order.h"
 #include "Projector1D2Order.h"
 #include "Projector1D4Order.h"
+#include "Projector2D1Order.h"
 #include "Projector2D2Order.h"
 #include "Projector2D4Order.h"
-#include "Projector2D1Order.h"
+
 
 #include "PicParams.h"
 #include "SmileiMPI.h"
@@ -20,8 +22,8 @@ public:
         // ---------------
         // 1d3v simulation
         // ---------------
-        if ( ( params.geometry == "1d3v" ) && ( params.interpolation_order == (unsigned int)2 ) ) {
-            Proj = new Projector1D2Order(params, smpi);
+        if ( ( params.geometry == "1d3v" ) && ( params.interpolation_order == (unsigned int)1 ) ) {
+            Proj = new Projector1D1Order(params, smpi);
         }
         else if ( ( params.geometry == "1d3v" ) && ( params.interpolation_order == (unsigned int)4 ) ) {
             Proj = new Projector1D4Order(params, smpi);

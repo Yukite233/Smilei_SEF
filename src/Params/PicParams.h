@@ -174,6 +174,9 @@ public:
     std::vector<std::string> bc_em_type_y;
     std::vector<std::string> bc_em_type_z;
 
+    std::vector<double> bc_em_value_x;
+    std::vector<double> bc_em_value_y;
+    std::vector<double> bc_em_value_z;
 
     //! Clusters width
     //unsigned int clrw;

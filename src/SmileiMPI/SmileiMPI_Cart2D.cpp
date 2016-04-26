@@ -840,6 +840,9 @@ void SmileiMPI_Cart2D::gatherField( Field* field_global ,Field* field  )
         }
     }
 
+    //> Handle the boundary points and corner points,
+    //> this is meaningful for periodic boundary condition,
+    //> but not affect the results of other boudary conditions.
     for(int i = 0; i < nx; i++)
     {
         for(int j = 0; j < ny; j++)
@@ -853,7 +856,6 @@ void SmileiMPI_Cart2D::gatherField( Field* field_global ,Field* field  )
         }
 
     }
-
     for(int i = 0; i < nx; i++)
     {
         for(int j = 0; j < ny; j++)
