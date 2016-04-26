@@ -24,6 +24,8 @@ public:
     Collisions2D_Ionization(PicParams&,std::vector<Species*>&,SmileiMPI*,unsigned int,std::vector<unsigned int>,std::vector<unsigned int>,double,bool,int);
     ~Collisions2D_Ionization();
 
+    double cross_section(double ke);
+
     void calculate_scatter_velocity(double ke, double v_magnitude, double mass1, double mass2,
                                     vector<double>& momentum_unit, vector<double>& momentum_temp);
 

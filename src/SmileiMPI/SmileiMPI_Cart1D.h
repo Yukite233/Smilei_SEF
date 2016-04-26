@@ -65,7 +65,6 @@ public:
     //! Identify corner MPI ranks (1D, 2 sides)
     int extrem_ranks[1][2];
 
-    void scatterGrid( Grid* grid );
     void gatherField( Field* field_global ,Field* field  );
     void scatterField( Field* field_global ,Field* field );
 

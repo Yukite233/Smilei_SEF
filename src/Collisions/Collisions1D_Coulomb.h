@@ -27,9 +27,9 @@ public:
     double coulomb_log;
 
     //! is true if any of the collisions objects need automatically-computed coulomb log
-    static bool debye_length_required;
+    bool debye_length_required;
     //! Contains the debye length in each cluster, computed each timestep
-    static std::vector<double> debye_length_squared;
+    std::vector<double> debye_length_squared;
 
     //! Method to calculate the Debye length in each cluster
     void calculate_debye_length(PicParams&,std::vector<Species*>&);

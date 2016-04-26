@@ -1,4 +1,4 @@
-#include "Collisions2D_Ionization.h"
+#include "Collisions2D_Elastic.h"
 #include "SmileiMPI.h"
 #include "Field2D.h"
 #include "H5.h"
@@ -14,7 +14,7 @@ using namespace std;
 
 
 // Constructor
-Collisions2D_Ionization::Collisions2D_Ionization(PicParams& param, vector<Species*>& vecSpecies, SmileiMPI* smpi,
+Collisions2D_Elastic::Collisions2D_Elastic(PicParams& param, vector<Species*>& vecSpecies, SmileiMPI* smpi,
                        unsigned int n_collisions,
                        vector<unsigned int> species_group1,
                        vector<unsigned int> species_group2,
@@ -44,14 +44,14 @@ Collisions2D_Ionization::Collisions2D_Ionization(PicParams& param, vector<Specie
 
 }
 
-Collisions2D_Ionization::~Collisions2D_Ionization()
+Collisions2D_Elastic::~Collisions2D_Elastic()
 {
 
 }
 
 
 // Calculates the collisions for a given Collisions2D object
-void Collisions2D_Ionization::collide(PicParams& params, vector<Species*>& vecSpecies, int itime)
+void Collisions2D_Elastic::collide(PicParams& params, vector<Species*>& vecSpecies, int itime)
 {
 
     unsigned int nbins = vecSpecies[0]->bmin.size(); // number of bins
@@ -189,7 +189,7 @@ void Collisions2D_Ionization::collide(PicParams& params, vector<Species*>& vecSp
 
 
 
-void cross_section(double ke)
+double Collisions2D_Elastic::cross_section(double ke)
 {
 
 }

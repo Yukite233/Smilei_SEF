@@ -189,7 +189,7 @@ void Collisions2D_ChargeExchange::collide(PicParams& params, vector<Species*>& v
 
 
 
-double cross_section(double ke)
+double Collisions2D_ChargeExchange::cross_section(double ke)
 {
 
 }

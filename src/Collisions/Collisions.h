@@ -59,8 +59,6 @@ public:
     //! Number of timesteps between each dump of collisions debugging
     int debug_every;
 
-    virtual double cross_section(double ke){};
-
     //! Method called in the main smilei loop to apply collisions at each timestep
     virtual void collide(PicParams&,std::vector<Species*>&,int){};
 

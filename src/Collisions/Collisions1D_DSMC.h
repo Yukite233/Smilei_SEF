@@ -22,17 +22,12 @@ public:
     Collisions1D_DSMC(PicParams&,std::vector<Species*>&,SmileiMPI*,unsigned int,std::vector<unsigned int>,std::vector<unsigned int>,double,bool,int);
     ~Collisions1D_DSMC();
 
-
-    //! DSMC logarithm (zero or negative means automatic)
-    double coulomb_log;
-
-    //! Method to calculate the Debye length in each cluster
-    void calculate_debye_length(PicParams&,std::vector<Species*>&);
+    double cross_section(double ke);
 
     //! Method called in the main smilei loop to apply collisions at each timestep
     void collide(PicParams&,std::vector<Species*>&,int);
 
-    virtual double cos_chi(double);
+
 private:
     inline double scatter_particles(Particles* particle1, int iPart1, Particles* particle2, int iPart2);
 

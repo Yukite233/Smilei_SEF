@@ -60,7 +60,7 @@ void Collisions2D_DSMC::collide(PicParams& params, vector<Species*>& vecSpecies,
     vector<unsigned int> *sg1, *sg2, *sgtmp;
     vector<int> bmin1, bmax1, bmin2, bmax2;
 
-    vector<vector<vector<int>>> index1, index2;
+    vector<vector<vector<int> > > index1, index2;
     vector<int> index1_tot, index2_tot;
     vector<int> n1, n2;
     vector<double> momentum_unit(3, 0.0), momentum_temp(3, 0.0);
@@ -226,7 +226,7 @@ void Collisions2D_DSMC::collide(PicParams& params, vector<Species*>& vecSpecies,
 
 
 
-void scatter_particles(Particles* particle1, int iPart1, Particles* particle2, int iPart2)
+void Collisions2D_DSMC::scatter_particles(Particles* particle1, int iPart1, Particles* particle2, int iPart2)
 {
     double rv;
     rv = sqrt( pow((particle1->momentum(0, iPart1) - particle2->momentum(0, iPart2)), 2)
@@ -236,7 +236,7 @@ void scatter_particles(Particles* particle1, int iPart1, Particles* particle2, i
 }
 
 
-double evalSigma(double cr)
+double Collisions2D_DSMC::evalSigma(double cr)
 {
 
 

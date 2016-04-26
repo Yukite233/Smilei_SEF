@@ -63,7 +63,7 @@ void Collisions1D_Ionization::collide(PicParams& params, vector<Species*>& vecSp
 //>the method is eqution (11) from the ref: a Monte Carlo collision model for the particle in cell method: applications to
 //>argon and oxygen discharges.
 //>and the code is transformed from C.F. Sang's fortran code
-void calculate_scatter_velocity(double ke, double v_magnitude, double mass1, double mass2,
+void Collisions1D_Ionization::calculate_scatter_velocity(double ke, double v_magnitude, double mass1, double mass2,
 vector<int>& momentum_unit, vector<int>& momentum_temp)
 {
     double up1, up2, up3;
@@ -115,7 +115,7 @@ vector<int>& momentum_unit, vector<int>& momentum_temp)
 
 
 
-void cross_section(double ke)
+double Collisions1D_Ionization::cross_section(double ke)
 {
 
 }

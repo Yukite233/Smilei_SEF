@@ -26,8 +26,8 @@ public:
     //! Coulomb logarithm (zero or negative means automatic)
     double coulomb_log;
     //! Contains the debye length in each cluster, computed each timestep
-    static std::vector<double> debye_length_squared;
-    
+    std::vector<double> debye_length_squared;
+
     //! Method to calculate the Debye length in each cluster
     void calculate_debye_length(PicParams&,std::vector<Species*>&);
 

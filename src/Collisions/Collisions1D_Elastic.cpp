@@ -1,4 +1,4 @@
-#include "Collisions1D_Ionization.h"
+#include "Collisions1D_Elastic.h"
 #include "SmileiMPI.h"
 #include "Field2D.h"
 #include "H5.h"
@@ -14,7 +14,7 @@ using namespace std;
 
 
 // Constructor
-Collisions1D_Ionization::Collisions1D_Ionization(PicParams& param, vector<Species*>& vecSpecies, SmileiMPI* smpi,
+Collisions1D_Elastic::Collisions1D_Elastic(PicParams& param, vector<Species*>& vecSpecies, SmileiMPI* smpi,
                        unsigned int n_collisions,
                        vector<unsigned int> species_group1,
                        vector<unsigned int> species_group2,
@@ -44,14 +44,14 @@ Collisions1D_Ionization::Collisions1D_Ionization(PicParams& param, vector<Specie
 
 }
 
-Collisions1D_Ionization::~Collisions1D_Ionization()
+Collisions1D_Elastic::~Collisions1D_Elastic()
 {
 
 }
 
 
 // Calculates the collisions for a given Collisions1D object
-void Collisions1D_Ionization::collide(PicParams& params, vector<Species*>& vecSpecies, int itime)
+void Collisions1D_Elastic::collide(PicParams& params, vector<Species*>& vecSpecies, int itime)
 {
 
 
@@ -59,7 +59,7 @@ void Collisions1D_Ionization::collide(PicParams& params, vector<Species*>& vecSp
 
 
 
-void cross_section(double ke)
+double Collisions1D_Elastic::cross_section(double ke)
 {
 
 }
