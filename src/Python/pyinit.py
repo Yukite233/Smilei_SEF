@@ -5,7 +5,7 @@
 
 class SmileiComponentType(type):
     """Metaclass to all Smilei components"""
-    
+
     # Constructor of classes
     def __init__(self, name, bases, attrs):
         self._list = []
@@ -13,7 +13,7 @@ class SmileiComponentType(type):
         self.current = 0
         # Run standard metaclass init
         super(SmileiComponentType, self).__init__(name, bases, attrs)
-    
+
     # Functions to define the iterator
     def __iter__(self):
         return self
@@ -22,7 +22,7 @@ class SmileiComponentType(type):
             raise StopIteration
         self.current += 1
         return self._list[self.current - 1]
-    
+
     # Function to return one given instance, for example DiagParticles[0]
     # Special case: species can also be indexed by their name: Species["ion1"]
     def __getitem__(self, key):
@@ -32,11 +32,11 @@ class SmileiComponentType(type):
                     return obj
         else:
             return self._list[key]
-    
+
     # Function to return the number of instances, for example len(Species)
     def __len__(self):
         return len(self._list)
-    
+
     # Function to display the content of the component
     def __repr__(self):
         if len(self._list)==0:
@@ -50,7 +50,7 @@ class SmileiComponentType(type):
 class SmileiComponent(object):
     """Smilei component generic class"""
     __metaclass__ = SmileiComponentType
-    
+
     # This constructor is used always for all child classes
     def __init__(self, **kwargs):
         if kwargs is not None: # add all kwargs as internal class variables
@@ -108,6 +108,14 @@ class Collisions(SmileiComponent):
     species2 = None
     coulomb_log = 0.
     debug_every = 0
+
+
+class PSI(SmileiComponent):
+    """PSI parameters"""
+    species1 = None
+    species2 = None
+    PSI_type = None
+
 
 
 #diagnostics

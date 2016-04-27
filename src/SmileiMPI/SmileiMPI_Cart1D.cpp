@@ -99,7 +99,8 @@ void SmileiMPI_Cart1D::createTopology(PicParams& params)
     for (unsigned int i=0 ; i<params.nDim_field ; i++) {
 
         n_space_global[i] = params.n_space_global[i];
-        if ( i!=0 ) {
+        //> I think this if should be removed
+        if ( 1 ) {
 
             params.n_space[i] = params.n_space_global[i] / number_of_procs[i];
             cell_starting_global_index[i] = coords_[i]*(params.n_space_global[i] / number_of_procs[i]);
@@ -127,11 +128,9 @@ void SmileiMPI_Cart1D::createTopology(PicParams& params)
 
     }
 
-
     //>>>calculate nspace_global_gather to gather and scatter the Field and Grid data
     dims_global_gather[0] = n_space_global[0]+(1+2*params.oversize[0])*number_of_procs[0];
 
-    grid_global_gather= new int[dims_global_gather[0]];
     field_global_gather= new double[dims_global_gather[0]];
 
     dims_gather         = new int[smilei_sz];
@@ -597,7 +596,7 @@ void SmileiMPI_Cart1D::gatherField( Field* field_global ,Field* field  )
         for(int i = 0; i < dims_gather[procs_rk]; i++)
         {
             iGlobal = iProcs * (dims_gather[0] - 2*oversize[0] -1) + i -oversize[0];
-            if(iProcs == 0 && i < oversize[0] || iProcs == number_of_procs[0] -1 && i > dims_gather[procs_rk*2] - 1 - oversize[0]){
+            if(iProcs == 0 && i < oversize[0] || iProcs == number_of_procs[0] -1 && i > dims_gather[procs_rk] - 1 - oversize[0]){
                 iGlobal = abs((int)f1D_global->dims_[0] - abs(iGlobal) - 1);
             }
 
@@ -609,22 +608,9 @@ void SmileiMPI_Cart1D::gatherField( Field* field_global ,Field* field  )
         }
     }
 
-    for(int i = 0; i < nx; i++)
-    {
-        if( i == 0){
-            f1D_global->data_[i] += f1D_global->data_[nx-1];
-        }
-    }
 
-    for(int i = 0; i < nx; i++)
-    {
-        if( i == nx-1){
-            f1D_global->data_[i] = f1D_global->data_[0];
-        }
-
-    }
-
-
+    f1D_global->data_[0] += f1D_global->data_[nx-1];
+    f1D_global->data_[nx-1] = f1D_global->data_[0];
 
 } // END gatherField
 
@@ -650,15 +636,15 @@ void SmileiMPI_Cart1D::scatterField( Field* field_global ,Field* field )
     for(int iProcs = 0; iProcs < number_of_procs[0]; iProcs++)
     {
         procs_rk = iProcs;
-        for(int i = 0; i < dims_gather[procs_rk*2]; i++)
+        for(int i = 0; i < dims_gather[procs_rk]; i++)
         {
             iGlobal = iProcs * (dims_gather[0] - 2*oversize[0] -1) + i -oversize[0];
-            if(iProcs == 0 && i < oversize[0] || iProcs == number_of_procs[0] -1 && i > dims_gather[procs_rk*2] - 1 - oversize[0]){
+            if(iProcs == 0 && i < oversize[0] || iProcs == number_of_procs[0] -1 && i > dims_gather[procs_rk] - 1 - oversize[0]){
                 iGlobal = abs((int)f1D_global->dims_[0] - abs(iGlobal) - 1);
             }
 
             iGlobal_gather = send_disp[procs_rk] + i;
-            //if(iGlobal >= ii || jGlobal >= jj) cout<<"error "<<iGlobal<<" "<<iProcs<<" "<<dims_gather[0]<<" "<<oversize[0]<<endl;
+            if(iGlobal >= ii) cout<<"error "<<iGlobal<<" "<<iProcs<<" "<<dims_gather[0]<<" "<<oversize[0]<<endl;
 
             field_global_gather[iGlobal_gather] = f1D_global->data_[iGlobal];
 

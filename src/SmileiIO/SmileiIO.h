@@ -38,8 +38,14 @@ public:
     virtual void write( ElectroMagn* fields, SmileiMPI* smpi ){};
 
 
-    //! Id of "Fields.h5", contains all fields per timestep
+    //> Id of "Fields_global.h5", contains global fields, such as potential, rho ...
     hid_t global_file_id_;
+
+    //> group  and dataset are like folder and file, respectively
+    hid_t       group_id, dataset_id, dataspace_id, attribute_id, memspace_id;  /* identifiers */
+    herr_t      status;
+
+
 
     hsize_t     dims_global[4];
     double* data_;
@@ -54,8 +60,13 @@ public:
     //! Disabled for now
     hid_t  partFile_id;
 
-    int ndims_t;
+
+    //> data dimensions to be outputed: t, z, y, x
+    //> ndims_[1] = 1 for 2d; ndims_[1] = ndims_[2] = 1 for 1d
     int ndims_[4];
+    //> dimensions of time, which means total timestep number to output
+    int ndims_t;
+
     //! Space dimension of a particle
     unsigned int nDim_particle;
 

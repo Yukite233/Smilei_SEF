@@ -34,10 +34,10 @@ Collisions1D_Coulomb::Collisions1D_Coulomb(PicParams& param, vector<Species*>& v
 
 
     // Calculate total number of bins
-    int nbins = vecSpecies[0]->bmin.size();
-    totbins = nbins;
+    //int nbins = vecSpecies[0]->bmin.size();
+    //totbins = nbins;
     //MPI_Allreduce( smpi->isMaster()?MPI_IN_PLACE:&totbins, &totbins, 1, MPI_INTEGER, MPI_SUM, MPI_COMM_WORLD);
-    MPI_Reduce( smpi->isMaster()?MPI_IN_PLACE:&totbins, &totbins, 1, MPI_INTEGER, MPI_SUM, 0, MPI_COMM_WORLD);
+    //MPI_Reduce( smpi->isMaster()?MPI_IN_PLACE:&totbins, &totbins, 1, MPI_INTEGER, MPI_SUM, 0, MPI_COMM_WORLD);
 
 
 

@@ -10,7 +10,7 @@ EF_Solver1D_TDMA::EF_Solver1D_TDMA(PicParams &params, SmileiMPI* smpi)
     SmileiMPI_Cart1D* smpi1D = static_cast<SmileiMPI_Cart1D*>(smpi);
 
     dx = params.cell_length[0];
-    nx = params.n_space[0]+1+2*params.oversize[0];
+    nx = params.n_space_global[0]+1;
 
     if(params.bc_em_type_x[0] == "Dirichlet"){
         bc_x_left = 1;
@@ -47,16 +47,16 @@ void EF_Solver1D_TDMA::operator()( ElectroMagn* fields, SmileiMPI* smpi)
 {
     SmileiMPI_Cart1D* smpi1D = static_cast<SmileiMPI_Cart1D*>(smpi);
     // Static-cast of the fields
-    Field1D* Ex1D = static_cast<Field1D*>(fields->Ex_);
 
-
-    Field1D* rho1D           = static_cast<Field1D*>(fields->rho_);
-    Field1D* rho1D_global    = static_cast<Field1D*>(fields->rho_global);
-    Field1D* phi1D_global    = static_cast<Field1D*>(fields->phi_global);
+    Field1D* Ex1D           = static_cast<Field1D*>(fields->Ex_);
+    Field1D* rho1D          = static_cast<Field1D*>(fields->rho_);
+    Field1D* rho1D_global   = static_cast<Field1D*>(fields->rho_global);
+    Field1D* phi1D_global   = static_cast<Field1D*>(fields->phi_global);
     Field1D* Ex1D_global    = static_cast<Field1D*>(fields->Ex_global);
 
 
     smpi1D->gatherField(rho1D_global, rho1D);
+
     if(smpi1D->isMaster()){
         solve_TDMA(rho1D_global, phi1D_global);
         //phi1D_global->put_to(0.0);
@@ -68,7 +68,9 @@ void EF_Solver1D_TDMA::operator()( ElectroMagn* fields, SmileiMPI* smpi)
 
 
     smpi1D->barrier();
+
     smpi1D->scatterField(Ex1D_global, Ex1D);
+
 }
 
 
@@ -129,11 +131,11 @@ void EF_Solver1D_TDMA::solve_TDMA(Field* rho, Field* phi)
         f[0] = field_left;
     }
     else if(bc_x_left == 2){
-        f[0] = field_right;
+        f[0] = field_derivative_left;
     }
 
     if(bc_x_right == 1){
-        f[nx-1] = field_derivative_left;
+        f[nx-1] = field_right;
     }
     else if(bc_x_right == 2){
         f[nx-1] = -field_derivative_right;

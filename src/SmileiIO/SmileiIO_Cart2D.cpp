@@ -40,6 +40,7 @@ SmileiIO_Cart2D::~SmileiIO_Cart2D()
 {
 }
 
+//> create hdf5 file, datespace, dateset and so on
 void SmileiIO_Cart2D::createPattern( PicParams& params, SmileiMPI* smpi )
 {
     hsize_t     dims;
@@ -103,7 +104,7 @@ void SmileiIO_Cart2D::createPattern( PicParams& params, SmileiMPI* smpi )
 
 
 
-//! this method writes a field on an hdf5 file should be used just for debug
+//! write potential, rho and so on into hdf5 file every some timesteps
 void SmileiIO_Cart2D::write(  ElectroMagn* fields, SmileiMPI* smpi )
 {
     SmileiMPI_Cart2D* smpi2D = static_cast<SmileiMPI_Cart2D*>(smpi);
@@ -142,7 +143,7 @@ void SmileiIO_Cart2D::write(  ElectroMagn* fields, SmileiMPI* smpi )
     status = H5Dclose (dataset_id);
 
 
-    //>write the ===global potential=== in time ndims_t to the file
+    //>write the ===global rho=== in time ndims_t to the file
     dataset_id = H5Dopen2 (group_id, "rho", H5P_DEFAULT);
 
     memspace_id = H5Screate_simple (4, count, NULL);

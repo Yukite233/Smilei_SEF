@@ -1,6 +1,7 @@
 #ifndef SOLVERFACTORY_H
 #define SOLVERFACTORY_H
 
+#include "EF_Solver1D_TDMA.h"
 #include "MF_Solver1D_Yee.h"
 #include "MF_Solver2D_Yee.h"
 #include "MF_Solver2D_Cowan.h"
@@ -15,7 +16,7 @@ public:
     static Solver* create(PicParams& params, Grid* grid, SmileiMPI* smpi) {
         Solver* solver = NULL;
         if ( params.geometry == "1d3v" ) {
-            //solver = new MF_Solver1D_Yee(params);
+            solver = new EF_Solver1D_TDMA(params, smpi);
         }
         else if ( params.geometry == "2d3v" ) {
 	    //if ()

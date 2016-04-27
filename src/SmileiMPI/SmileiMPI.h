@@ -153,7 +153,7 @@ public:
 
 
     //! Real (exclunding oversize) global number of cells (res_space x sim_length)
-    std::vector<int> n_space_global;
+    std::vector<unsigned int> n_space_global;
   	//>>> (inclunding oversize) global number of cells (res_space x sim_length) to MPI_GaterV and MPI_scatter
     std::vector<int> n_space_global_gather;
 

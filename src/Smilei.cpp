@@ -131,15 +131,16 @@ int main (int argc, char* argv[])
 
     Solver* solver = SolverFactory::create(params, grid, smpi);
 
-    (*solver)(EMfields, smpi);
-
 
     // Initialize the collisions (vector of collisions)
     // ------------------------------------------------------------------------------------
-
+    TITLE("Creating Collisions");
     vector<Collisions*> vecCollisions = CollisionsFactory::create(params, input_data, vecSpecies, smpi);
-    vector<PSI*> vecPSI = PSIFactory::create(params, input_data, vecSpecies, smpi);
+    smpi->barrier();
 
+    TITLE("Creating PSI");
+    vector<PSI*> vecPSI = PSIFactory::create(params, input_data, vecSpecies, smpi);
+    smpi->barrier();
 
     TITLE("Creating Interp/Proj");
 
@@ -150,6 +151,9 @@ int main (int argc, char* argv[])
     Projector* Proj = ProjectorFactory::create(params, smpi);
     smpi->barrier();
 
+    TITLE("Solve the field first time before PIC loop");
+    (*solver)(EMfields, smpi);
+    smpi->barrier();
 
     // ------------------------------------------------------------------------
     // Initialize the simulation times time_prim at n=0 and time_dual at n=+1/2
@@ -187,7 +191,7 @@ int main (int argc, char* argv[])
             //if (vecCollisions[icoll]->debye_length_required){
             //    vecCollisions[icoll]->calculate_debye_length(params,vecSpecies);
             //}
-            vecCollisions[icoll]->collide(params,vecSpecies,itime);
+            //vecCollisions[icoll]->collide(params,vecSpecies,itime);
         }
 
 
@@ -265,8 +269,8 @@ int main (int argc, char* argv[])
     //if ( smpi->isMaster() ) MESSAGE("Time in time loop : " << timElapsed );
 
     TITLE("Time profiling :");
-    timer[0].update();
-    timer[0].print();
+    //timer[0].update();
+    //timer[0].print();
 
 
     // ------------------------------------------------------------------
@@ -289,6 +293,7 @@ int main (int argc, char* argv[])
     vecSpecies.clear();
 
     TITLE("END");
+    delete sio;
     delete smpi;
     delete smpiData;
     return 0;

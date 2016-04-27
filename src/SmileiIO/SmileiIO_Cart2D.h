@@ -28,19 +28,6 @@ public:
     void write( ElectroMagn* fields, SmileiMPI* smpi );
 
 private:
-    //! memory space for // HDF5 write/read
-    //! Size = 2 x 2 : 0 if prim, 1 if dual per direction
-    hid_t memspace_ [2][2];
-    //! file space for // HDF5 write/read
-    //! Size = 2 x 2 : 0 if prim, 1 if dual per direction
-    hid_t filespace_[2][2];
-
-    //! \todo Define chunk size of output for interpolated output
-    //hsize_t chunk_dims[2];
-
-
-    hid_t       group_id, dataset_id, dataspace_id, attribute_id, memspace_id;  /* identifiers */
-    herr_t      status;
 
     hsize_t     count[4];              /* size of subset in the file */
     hsize_t     offset[4];             /* subset offset in the file */
