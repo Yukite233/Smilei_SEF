@@ -19,7 +19,7 @@ class PSI
 public:
     //! Constructor for PSI between two species
     PSI(){};
-    ~PSI(){};
+    virtual ~PSI(){};
 
     //! Group of the species numbers that are associated for PSI.
     //> for PSI_Injection, only species1 is used;

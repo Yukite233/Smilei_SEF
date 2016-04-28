@@ -45,7 +45,7 @@ Collisions1D_Coulomb::Collisions1D_Coulomb(PicParams& param, vector<Species*>& v
 
 Collisions1D_Coulomb::~Collisions1D_Coulomb()
 {
-    if (fileId != 0) H5Fclose(fileId);
+
 }
 
 

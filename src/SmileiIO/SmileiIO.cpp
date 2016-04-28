@@ -23,7 +23,7 @@ using namespace std;
 SmileiIO::SmileiIO( PicParams& params, SmileiMPI* smpi )
 {
     // Fields_global.h5
-    global_file_id_  = H5Fcreate( "Fields_global.h5", H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+    if(smpi->isMaster()) global_file_id_  = H5Fcreate( "Fields_global.h5", H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
     ndims_t = 0;
 
 }
@@ -31,5 +31,5 @@ SmileiIO::SmileiIO( PicParams& params, SmileiMPI* smpi )
 SmileiIO::~SmileiIO()
 {
     // Management of global IO file
-    H5Fclose( global_file_id_ );
+    //H5Fclose( global_file_id_ );
 }

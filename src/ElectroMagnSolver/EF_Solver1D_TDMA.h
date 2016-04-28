@@ -36,6 +36,8 @@ public:
     //>>>geometry parameters
     int nx;
     double dx;
+    double dx_inv_;
+    double dx_sq;
 
 
 protected:

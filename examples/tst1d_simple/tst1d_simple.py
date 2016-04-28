@@ -10,8 +10,8 @@ import math
 
 l0 = 1.0			# normalized by 1.0e-5 m
 t0 = 1.0e-12 * 3.0e8 / 1.0e-5	# real time = 1.0e-12 s
-Lsim = [50.*l0]	# length of the simulation
-Tsim = 100.*t0			# duration of the simulation
+Lsim = [200.*l0]	# length of the simulation
+Tsim = 1000.*t0			# duration of the simulation
 resx = 20.				# nb of cells in on laser wavelength
 rest = 30.				# time of timestep in one optical cycle 
 
@@ -167,5 +167,5 @@ Collisions(
 # print_every (on screen text output) 
 # print_every = 60
 
-dump_step = 10
+dump_step = 100
 

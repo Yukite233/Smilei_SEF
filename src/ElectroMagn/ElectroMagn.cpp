@@ -92,7 +92,7 @@ oversize(params.oversize)
 // Destructor for the virtual class ElectroMagn
 // ---------------------------------------------------------------------------------------------------------------------
 ElectroMagn::~ElectroMagn()
-{
+{MESSAGE(" 0000");
     delete Ex_;
     delete Ey_;
     delete Ez_;
@@ -106,7 +106,7 @@ ElectroMagn::~ElectroMagn()
     delete Jy_;
     delete Jz_;
     delete rho_;
-
+MESSAGE(" 111111");
     if (Ex_avg!=NULL) {
         delete Ex_avg;
         delete Ey_avg;
@@ -115,14 +115,14 @@ ElectroMagn::~ElectroMagn()
         delete By_avg;
         delete Bz_avg;
     }
-
+MESSAGE(" 22222");
     for (unsigned int ispec=0; ispec<n_species; ispec++) {
       delete Jx_s[ispec];
       delete Jy_s[ispec];
       delete Jz_s[ispec];
       delete rho_s[ispec];
     }
-
+MESSAGE(" 33333");
 
 }//END Destructer
 

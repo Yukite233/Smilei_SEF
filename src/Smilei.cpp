@@ -285,7 +285,8 @@ int main (int argc, char* argv[])
     // ------------------------------
     delete Proj;
     delete Interp;
-    delete EMfields;
+    smpi->barrier();
+    //delete EMfields;
     for(unsigned int i=0; i<vecCollisions.size(); i++) delete vecCollisions[i];
     vecCollisions.clear();
 

@@ -20,7 +20,7 @@ class PSI1D : public PSI
 public:
     //! Constructor for PSI between two species
     PSI1D(){};
-    ~PSI1D(){};
+    virtual ~PSI1D(){};
 
 
     //! Method called in the main smilei loop to apply collisions at each timestep

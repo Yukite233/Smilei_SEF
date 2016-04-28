@@ -43,7 +43,7 @@ class Collisions
 public:
     //! Constructor for Collisions between two species
     Collisions(){};
-    ~Collisions(){};
+    virtual ~Collisions(){};
 
     //! Identification number of the Collisions object
     int n_collisions;

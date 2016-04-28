@@ -21,7 +21,7 @@ class Collisions2D : public Collisions
 public:
     //! Constructor for Collisions between two species
     Collisions2D(){};
-    ~Collisions2D(){};
+    virtual ~Collisions2D(){};
 
 protected:
     //! Inverse of the spatial-step

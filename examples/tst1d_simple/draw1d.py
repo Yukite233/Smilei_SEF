@@ -28,7 +28,7 @@ import matplotlib.pyplot as plt
 ##inite the fig of matplotlib
 fig=plt.figure(figsize=(10,8))
 fig.subplots_adjust(top=0.9,bottom=0.1,wspace=0.5,hspace=0.4)
-t = 2
+t = 8
 
 
 ##read data from file
@@ -47,7 +47,6 @@ nx = dims[3]
 dx=1.0
 x = np.linspace(0,100.0,nx)
 print nx
-print x
 
 
 ##============rho======================================================
@@ -66,7 +65,7 @@ cf_temp1=sp_temp1.plot(x, val_1d)
 sp_temp1.axis([x.min(),x.max(),val_1d.min(),val_1d.max()])
 #sp_temp1.set_yticks(np.arange(0,y.max(),100))
 sp_temp1.set_xlabel('x(mm)')
-sp_temp1.set_ylabel('rho')
+sp_temp1.set_ylabel('Charge density')
 
 
 
@@ -88,7 +87,7 @@ cf_temp1=sp_temp1.plot(x, val_1d)
 sp_temp1.axis([x.min(),x.max(),val_1d.min(),val_1d.max()])
 #sp_temp1.set_yticks(np.arange(0,y.max(),100))
 sp_temp1.set_xlabel('x(mm)')
-sp_temp1.set_ylabel('rho')
+sp_temp1.set_ylabel('Electric potential')
 
 
 

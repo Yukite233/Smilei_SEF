@@ -10,6 +10,8 @@ EF_Solver1D_TDMA::EF_Solver1D_TDMA(PicParams &params, SmileiMPI* smpi)
     SmileiMPI_Cart1D* smpi1D = static_cast<SmileiMPI_Cart1D*>(smpi);
 
     dx = params.cell_length[0];
+    dx_inv_ = 1.0 / dx;
+    dx_sq = dx * dx;
     nx = params.n_space_global[0]+1;
 
     if(params.bc_em_type_x[0] == "Dirichlet"){
@@ -124,7 +126,7 @@ void EF_Solver1D_TDMA::solve_TDMA(Field* rho, Field* phi)
     //> The boundary value can be changed with time
     for(int i = 1; i < nx-1; i++)
     {
-        f[i] = -dx * (*rho1D)(i);
+        f[i] = -dx_sq * (*rho1D)(i);
     }
 
     if(bc_x_left == 1){
@@ -167,10 +169,10 @@ void EF_Solver1D_TDMA::solve_Ex(Field* phi, Field* Ex)
 
     for(int i = 1; i < nx-1; i++)
     {
-        (*Ex1D)(i) = - ((*phi1D)(i+1) - (*phi1D)(i-1)) / (2.0*dx);
+        (*Ex1D)(i) = - ((*phi1D)(i+1) - (*phi1D)(i-1)) *0.5 * dx_inv_;
     }
 
-    (*Ex1D)(0) = -(-3.0 * (*phi1D)(0) + 4.0 * (*phi1D)(1) - (*phi1D)(2)) / (2.0*dx);
-    (*Ex1D)(nx-1) = -((*phi1D)(nx-3) - 4.0 * (*phi1D)(nx-2) + 3.0 * (*phi1D)(nx-1)) / (2.0*dx);
+    (*Ex1D)(0) = -(-3.0 * (*phi1D)(0) + 4.0 * (*phi1D)(1) - (*phi1D)(2)) *0.5 * dx_inv_;
+    (*Ex1D)(nx-1) = -((*phi1D)(nx-3) - 4.0 * (*phi1D)(nx-2) + 3.0 * (*phi1D)(nx-1)) *0.5 * dx_inv_;
 
 }

@@ -20,7 +20,7 @@ class PSI2D : public PSI
 public:
     //! Constructor for PSI between two species
     PSI2D(){};
-    ~PSI2D(){};
+    virtual ~PSI2D(){};
 
 
 

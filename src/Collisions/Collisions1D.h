@@ -21,7 +21,7 @@ class Collisions1D : public Collisions
 public:
     //! Constructor for Collisions between two species
     Collisions1D(){};
-    ~Collisions1D(){};
+    virtual ~Collisions1D(){};
 private:
     double dx_inv_;
     unsigned int index_domain_begin;
